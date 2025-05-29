@@ -347,11 +347,348 @@ return 0;
 
 
 
+## map
+`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">map</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> 用于存储键值对（key-value pairs），并基于键自动排序元素。</font>
+
+### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">核心特性</font>
+1. **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">有序性</font>**
+    - <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">元素按</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">键的升序排列</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">（默认使用</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"><</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">运算符比较键）。</font>
+    - <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">支持自定义排序规则，通过提供比较函数或函数对象实现。</font>
+2. **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">底层实现</font>**
+    - <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">基于</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">红黑树</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">（自平衡二叉搜索树），保证插入、删除和查找操作的时间复杂度为 </font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">O(log n)</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">。</font>
+3. **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">唯一键</font>**
+    - <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">每个键在</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">map</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">中</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">唯一</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">，不可重复。若需允许重复键，应使用</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">std::multimap</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">。</font>
+4. **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">键的类型要求</font>**
+    - <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">键必须支持</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">严格弱序比较</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">（默认通过</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"><</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">运算符），或提供自定义比较函数。</font>
+
+### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">常见成员函数</font>
+#### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">1. 插入/修改</font>
+`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">insert</font>**`
+
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">功能</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：插入键值对。若键已存在，</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">不覆盖原有值</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">。</font>
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">参数</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：可以是</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">pair</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">对象或使用</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">make_pair</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">。</font>
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">返回值</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：返回一个</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">pair<iterator, bool></font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">，其中：</font>
+    - `<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">iterator</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：指向插入位置的迭代器。</font>
+    - `<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">bool</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：表示是否插入成功（</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">true</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">表示插入新键，</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">false</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">表示键已存在）。</font>
+
+```cpp
+std::map<int, std::string> m;
+auto ret = m.insert(std::make_pair(1, "one"));
+if (ret.second) {
+    std::cout << "Inserted: " << ret.first->second << std::endl;
+}
+```
+
+`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">emplace</font>**`
+
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">功能</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：直接在容器内构造键值对，</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">避免临时对象拷贝</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">（比</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">insert</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">更高效）。</font>
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">参数</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：构造键值对所需的参数。</font>
+
+```cpp
+auto ret = m.emplace(2, "two");  // 无需手动创建pair
+if (ret.second) {
+    std::cout << "Emplaced: " << ret.first->second << std::endl;
+}
+```
+
+`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">operator[]</font>**`
+
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">功能</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：通过键访问值。若键不存在，</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">自动插入默认值</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">（如</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">std::string()</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">）。</font>
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">注意</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：可能导致意外插入默认值，需谨慎使用。</font>
+
+```cpp
+m[3] = "three";         // 插入键3的值
+std::cout << m[4];      // 键4不存在，自动插入空字符串！
+```
+
+#### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">2. 访问</font>
+`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">at</font>**`
+
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">功能</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：安全访问值。若键不存在，</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">抛出</font>****<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>**`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">std::out_of_range</font>**`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>****<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">异常</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">。</font>
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">适用场景</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：需要严格检查键是否存在时使用。</font>
+
+```cpp
+try {
+    std::cout << m.at(5);  // 若键5不存在，抛出异常
+} catch (const std::out_of_range& e) {
+    std::cerr << "Key not found!" << std::endl;
+}
+```
+
+`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">operator[]</font>**`
+
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">功能</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：通过键访问值。若键不存在，自动插入默认值（如</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">int()</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">、</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">std::string()</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">）。</font>
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">注意</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：可能意外修改容器内容，需确保键存在时使用。</font>
+
+`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">find</font>**`
+
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">功能</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：查找键，返回指向该键值对的迭代器。若键不存在，返回</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">end()</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">。</font>
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">适用场景</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：需要判断键是否存在并获取值。</font>
+
+```cpp
+auto it = m.find(2);
+if (it != m.end()) {
+    std::cout << "Found: " << it->second << std::endl;
+}
+```
+
+`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">count</font>**`
+
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">功能</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：返回键的数量（对</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">std::map</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">始终是</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">0</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">或</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">1</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">）。</font>
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">适用场景</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：仅需判断键是否存在，无需获取值。</font>
+
+```cpp
+if (m.count(3) > 0) {
+    std::cout << "Key 3 exists" << std::endl;
+}
+```
+
+#### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">3. 删除</font>
+`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">erase</font>**`
+
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">功能</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：删除元素。支持通过键、迭代器或迭代器范围删除。</font>
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">返回值</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：返回删除的元素数量（对</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">map</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">是</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">0</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">或</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">1</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">）。</font>
+
+```cpp
+m.erase(1);                   // 删除键为1的元素（返回1）
+auto it = m.find(2);
+if (it != m.end()) {
+    m.erase(it);              // 通过迭代器删除（无返回值）
+}
+```
+
+#### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">4. 容量</font>
+`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">size</font>**`
+
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">功能</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：返回容器中元素的数量。</font>
+
+```cpp
+std::cout << "Size: " << m.size() << std::endl;  // 输出元素总数
+```
+
+`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">empty</font>**`
+
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">功能</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：判断容器是否为空。</font>
+
+```cpp
+if (m.empty()) {
+    std::cout << "Map is empty" << std::endl;
+}
+```
+
+#### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">5. 迭代器</font>
+`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">begin</font>**`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> / </font>**`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">end</font>**`
+
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">功能</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：返回指向容器</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">第一个元素</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">和</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">尾后位置</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">的迭代器（正向遍历）。</font>
+
+```cpp
+for (auto it = m.begin(); it != m.end(); ++it) {
+    std::cout << it->first << ": " << it->second << std::endl;
+}
+```
+
+`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">rbegin</font>**`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> / </font>**`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">rend</font>**`
+
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">功能</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：返回</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">反向</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">迭代器，用于</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">逆序遍历</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">（从最后一个元素到第一个）。</font>
+
+```cpp
+for (auto rit = m.rbegin(); rit != m.rend(); ++rit) {
+    std::cout << rit->first << ": " << rit->second << std::endl;  // 逆序输出
+}
+```
+
+### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">基本操作示例</font>
+```cpp
+#include <iostream>
+#include <map>
+#include <string>
+
+int main() {
+    // 定义map，键为int，值为string
+    std::map<int, std::string> m;
+
+    // 插入元素
+    m.insert(std::make_pair(3, "three"));  // 使用insert
+    m[1] = "one";                          // 使用operator[]
+    m[5] = "five";
+    m[2] = "two";
+
+    // 遍历（有序输出）
+    for (const auto& pair : m) {
+        std::cout << pair.first << ": " << pair.second << std::endl;
+    }
+    // 输出顺序：1: one, 2: two, 3: three, 5: five
+
+    // 查找元素
+    auto it = m.find(3);
+    if (it != m.end()) {
+        std::cout << "Found: " << it->second << std::endl;  // 输出: Found: three
+    }
+
+    // 删除元素
+    m.erase(2);  // 删除键为2的元素
+
+    // 使用at访问（键不存在时抛出异常）
+    try {
+        std::cout << m.at(4) << std::endl;  // 抛出std::out_of_range
+    } catch (const std::out_of_range& e) {
+        std::cerr << "Key not found." << std::endl;
+    }
+
+    return 0;
+}
+```
+
+### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">与</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">unordered_map</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">对比</font>
+| <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">特性</font> | `<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">std::map</font>` | `<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">std::unordered_map</font>` |
+| :---: | :---: | :---: |
+| **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">底层结构</font>** | <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">红黑树（有序）</font> | <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">哈希表（无序）</font> |
+| **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">查找复杂度</font>** | <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">O(log n)</font> | <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">平均O(1)，最差O(n)</font> |
+| **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">插入/删除复杂度</font>** | <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">O(log n)</font> | <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">平均O(1)，最差O(n)</font> |
+| **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">内存占用</font>** | <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">较高（树结构额外开销）</font> | <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">较低（哈希表可能需扩容）</font> |
+| **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">键类型要求</font>** | <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">支持比较（如</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"><</font>`<br/><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">运算符）</font> | <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">支持哈希函数和相等比较</font> |
+| **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">遍历顺序</font>** | <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">按键升序</font> | <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">无特定顺序</font> |
 
 
+---
 
+### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">适用场景</font>
++ <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">需要</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">有序键</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">或</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">范围查询</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">（如遍历某区间内的键）。</font>
++ <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">对插入/删除/查找的</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">稳定性要求较高</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">（避免哈希冲突的最坏情况）。</font>
++ <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">键类型天然有序且无需自定义哈希函数时。</font>
 
+<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">若无需顺序且追求更高性能，优先选择 </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">std::unordered_map</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">。</font>
 
+### 例题
+旋转九宫格
+
+[https://www.luogu.com.cn/problem/P10578](https://www.luogu.com.cn/problem/P10578)
+
+**题目：**
+
+给定一个 $ 3\times 3 $ 的九宫格，每个格子内分别含有一个数字，每个格子里的数字互不相同。每步我们可以选择任意一个 $ 2\times 2 $ 的区域将其顺时针旋转，例如：
+
+例如
+
+```plain
+1 2 3
+4 5 6
+7 8 9
+```
+
+将其旋转右上角，可得：
+
+```plain
+1 5 2
+4 6 3
+7 8 9
+```
+
+问最少需要几步才能将给定的状态旋转为
+
+```plain
+1 2 3
+4 5 6
+7 8 9
+```
+
+**代码：**
+
+```cpp
+#include <iostream>
+#include <queue>
+#include <unordered_map>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+const string target = "123456789";
+unordered_map<string, int> dist; // 步数
+
+vector<string> generate_new_states(const string &s) {
+    vector<string> new_states;
+
+    // 左上区域：0,1,3,4
+    string s1 = s;
+    s1[0] = s[1];
+    s1[1] = s[4];
+    s1[3] = s[0];
+    s1[4] = s[3];
+    new_states.push_back(s1);
+
+    // 右上区域：1,2,4,5
+    string s2 = s;
+    s2[1] = s[2];
+    s2[2] = s[5];
+    s2[4] = s[1];
+    s2[5] = s[4];
+    new_states.push_back(s2);
+
+    // 左下区域：3,4,6,7
+    string s3 = s;
+    s3[3] = s[4];
+    s3[4] = s[7];
+    s3[6] = s[3];
+    s3[7] = s[6];
+    new_states.push_back(s3);
+
+    // 右下区域：4,5,7,8
+    string s4 = s;
+    s4[4] = s[5];
+    s4[5] = s[8];
+    s4[7] = s[4];
+    s4[8] = s[7];
+    new_states.push_back(s4);
+
+    return new_states;
+}
+
+void preprocess() {
+    queue<string> q;
+    q.push(target);
+    dist[target] = 0;
+
+    while (!q.empty()) {
+        string current = q.front();
+        q.pop();
+
+        int current_dist = dist[current];
+
+        vector<string> next_states = generate_new_states(current);
+
+        for (const string &next : next_states) {
+            if (dist.find(next) == dist.end()) {
+                dist[next] = current_dist + 1;
+                q.push(next);
+            }
+        }
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    preprocess();
+
+    int T;
+    cin >> T;
+    while (T--) {
+        string s;
+        for (int i = 0; i < 3; ++i) {
+            int a, b, c;
+            cin >> a >> b >> c;
+            s += (char)('0' + a);
+            s += (char)('0' + b);
+            s += (char)('0' + c);
+        }
+        cout << dist[s] << '\n';
+    }
+
+    return 0;
+}
+```
 
 
 
@@ -627,7 +964,95 @@ int main() {
 + **稳定性**：`sort()` 是**不稳定**的排序算法。可以使用 `**stable_sort()作为稳定排序算法**`。
 + **空容器**：如果容器为空，`sort()` 不会进行任何操作，程序也不会报错。
 
+### 排序与并查集的例题
+[https://www.luogu.com.cn/problem/P10577](https://www.luogu.com.cn/problem/P10577)
 
+**题目**
+
+在森林幽静的一隅，有一村落居住着 $ n $ 只兔子。
+
+某个月光皎洁的夜晚，这些兔子列成一队，准备开始一场集结跳跃活动。村落中的每只兔子都占据一个位置，对于第 $ i $ 只兔子，其位置为 $ p_i $。我们称位置较小的为左边，位置较大的为右边。
+
+按照兔子村落的习俗，每只兔子都会选择距离自己最近的兔子作为同伴，并向同伴所在的方向进行跳跃。如果一只兔子左边和右边的兔子距离它一样近，那么它会选择左边的兔子作为同伴。
+
+兔子的每次跳跃，只能向左或向右移动一个单位距离。也就是说，如果一只兔子当前位于 $ x $ 的位置，那么它下一次跳跃后会到达 $ x-1 $ 或者 $ x+1 $ 的位置。
+
+当两只相互靠近的兔子之间的距离为 $ 1 $ 时，左边的兔子会停在原地，而右边的兔子会跳到左边兔子的位置上，完成集结。
+
+兔子们会一直跳跃，直到与自己最初选择的同伴完成集结后停下。
+
+请问，当所有兔子都完成集结后，每只兔子都分别位于哪个位置上？
+
+**输入格式**
+
+输入的第一行包含一个整数 $ n $，表示兔子的数量。  
+第二行包含 $ n $ 个整数 $ p_1,p_2,\cdots, p_n $，相邻整数之间使用一个空格分隔，表示每只兔子的初始位置。
+
+**输出格式**
+
+输出一行包含 n 个整数，表示每只兔子完成集结后的位置。
+
+**代码：**
+
+```cpp
+#include <iostream>
+#include <algorithm>
+using namespace std;
+int const N = 1e5 + 5;
+int fa[N];
+
+struct stu {
+  int pos, id;
+} s[N]; //等效 stu s[N];
+
+int get(int x) {
+  if (fa[x] == x) return x;
+  return fa[x] = get(fa[x]);
+}
+
+bool cmp1(stu x, stu y) {
+  return x.pos < y.pos;
+}
+bool cmp2(stu x, stu y) {
+  return x.id < y.id;
+}
+
+int main() {
+  int n;
+  cin >> n;
+  for (int i = 1; i <= n; i++) {
+    cin >> s[i].pos;
+    s[i].id = i;
+  }
+  sort(s + 1, s + n + 1, cmp1);
+  fa[1] = 2;
+  fa[n] = n - 1;  //边界优化
+  for (int i = 2; i <= n - 1; i++) {
+    int lp = s[i - 1].pos, p = s[i].pos, rp = s[i + 1].pos;
+    if (p - lp <= rp - p) fa[i] = i - 1; //判断左右哪一个更近
+    else fa[i] = i + 1;
+  }
+  for (int i = 1; i <= n - 1; i++) {
+    if (fa[i] == i + 1 && fa[i + 1] == i) {
+      fa[i] = i;
+      fa[i + 1] = i + 1;
+      int p = (s[i].pos + s[i + 1].pos) / 2;
+      s[i].pos = s[i + 1].pos = p;
+    } // 如果互为节点，向中靠拢
+  }
+  for (int i = 1; i <= n; i++) {
+    if (fa[i] != i) {
+      int root = get(i);
+      s[i].pos = s[root].pos;
+    }// 更新节点位置
+  }
+  sort(s + 1, s + n + 1, cmp2); //结构体的作用，逆向回去 
+  for (int i = 1; i <= n; i++) {
+    cout << s[i].pos << " ";
+  }
+  return 0;
+}
+```
 
 
 
@@ -996,10 +1421,9 @@ int find(int x) {
 
 ```cpp
 void unionSet(int x, int y) {
-    int rootX = find(x),rootY = find(y);
-    if (rootX != rootY) {
-        parent[rootY] = rootX;  // 可结合按秩合并优化
-    }
+    x = findroot(x);
+	y = findroot(y);
+	fa[x] = y;
 }
 ```
 
@@ -3228,12 +3652,90 @@ int main() {
 
 
 
-# ******类和对象**
+# **类和对象**
+## **接口分离**
+源文件包含客户端，例子为WX2.cpp
+
+```cpp
+#include <iostream>
+#include <string>
+#include"Employee.h"  //调用头文件
+using namespace std;
+int main() {
+    Employee employee1("Bob", 34500);  //这里的Employee就相当于一种结构体
+
+    cout << "Employee 1: " << employee1.getName() <<endl;  //操作对象.成员函数（）
+    cout << "Yearly Salary: " << employee1.getSalary() << endl;
+    
+    cout << "Increasing employee salaries by 10%" << endl;
+    employee1.setSalary(employee1.getSalary()*1.1);
+
+    return 0;
+}
+```
+
+头文件包含接口，实现,
+
+接口Employee.h
+
+```cpp
+class Employee {
+private:  
+    std::string Name;  //避免污染不用using，记得要std::
+    int salary;
+public:
+    Employee(std::string, int);  //在接口的函数调用中，只用指明各个参数的类型，不用具体的参数名
+    void setName(const std::string );  //const在内部说明该参数值在函数内部不能被修改
+    std::string getName() const;  //const在外部说明函数返回的值是常量，不能被修改
+    void setSalary(int );
+    int getSalary() const;
+};  // class 大括号结尾是有‘；’的
+```
+
+
+
+实现employee.cpp
+
+```cpp
+#include<string>
+#include<iostream>
+#include"Employee.h"  //在实现中也要调用头文件
+//这里就不用再提示 class了，我们直接写函数，包括构造函数
+Employee::Employee(std::string name, int sal) {  //这是构造函数，作用是在创建类的对象时初始化对象 
+    Name = name;                                 //这里的函数都要有Employee::,是来说明这个函数Employee这个类里面
+    if (sal < 0)sal = 0;
+    salary = sal / 12;
+}
+
+void Employee::setName(const std::string name) {
+    Name = name;
+}
+
+std::string Employee::getName() const {
+    return Name;
+}
+
+void Employee::setSalary(int sal) {
+    if (sal < 0)sal = 0;
+    salary = sal / 12;
+}
+
+int Employee::getSalary() const {
+    return salary * 12;
+}
+```
+
+
+
+
+
+
+
+## **封装**
 **C++面向对象的三大特性为：封装、继承、多态**
 
 C++认为万事万物都皆为对象，对象上有其属性和行为
 
-## **封装**
 ### **意义：**
 + 将属性和行为作为一个整体
 + 将属性和行为加以权限控制
@@ -3748,7 +4250,6 @@ class Person {
 			cout << "有参构造函数!" << endl;
 			m_age = age;
 			m_height = new int(height);
-
 		}
 //拷贝构造函数 自己实现拷贝构造函数 解决拷贝带来的问题
 		Person(const Person& p) {
@@ -4153,13 +4654,11 @@ class Person {
 			//1、当形参和成员变量同名时，可用this指针来区分
 			this->age = age;
 		}
-
 		Person& PersonAddPerson(Person p) {
 			this->age += p.age;
 			//返回对象本身
 			return *this;
 		}
-
 		int age;
 };
 
@@ -4179,6 +4678,8 @@ int main() {
 	return 0;
 }
 ```
+
+
 
 
 
@@ -4224,6 +4725,8 @@ int main() {
 	return 0;
 }
 ```
+
+
 
 
 
@@ -5026,6 +5529,8 @@ int main() {
 
 
 
+
+
 #### 继承方式
 继承的语法：`class 子类 : 继承方式  父类`
 
@@ -5469,7 +5974,7 @@ int main() {
 
 + 父类指针或引用指向子类对象
 
-**覆盖（override）**：**函数返回值类型  函数名 参数列表** **一致**称为重写
+**覆盖（override）**：**函数返回值类型  函数名 参数列表** **一致**称为覆盖
 
 ```cpp
 class Animal {
@@ -5492,7 +5997,6 @@ class Dog :public Animal {
 		void speak() {
 			cout << "小狗在说话" << endl;
 		}
-
 };
 //我们希望传入什么对象，那么就调用什么对象的函数
 //如果函数地址在编译阶段就能确定，那么静态联编
@@ -5531,115 +6035,206 @@ int main() {
 
 
 
-#### 多态案例一-计算器类
-案例描述：
+**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">静态类型 vs. 动态类型</font>**
 
-分别利用普通写法和多态技术，设计实现两个操作数进行运算的计算器类
-
-多态的优点：
-
-+ 代码组织结构清晰
-+ 可读性强
-+ 利于前期和后期的扩展以及维护
++ <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">静态类型：指针/引用的声明类型（如 </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">A*</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">），相当于“</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">标签</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">”，非虚函数只看“标签”。</font>
++ <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">动态类型：</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">实际</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">指向的对象类型（如 </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">B</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">），相当于“</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">实际内容</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">”，虚函数看“实际内容”。</font>
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">非虚函数</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">由静态绑定，</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">虚函数</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">由动态绑定。</font>
 
 **示例：**
 
 ```cpp
-//普通实现
-class Calculator {
-	public:
-		int getResult(string oper) {
-			if (oper == "+") {
-				return m_Num1 + m_Num2;
-			} else if (oper == "-") {
-				return m_Num1 - m_Num2;
-			} else if (oper == "*") {
-				return m_Num1 * m_Num2;
-			}
-			//如果要提供新的运算，需要修改源码
-		}
-	public:
-		int m_Num1;
-		int m_Num2;
+#include <iostream>
+using namespace std;
+class A {
+public:
+    // 非虚函数：静态绑定，调用路径由指针/引用的声明类型决定
+    void testfuc() {  
+        cout << "A::testfuc ";  // [Step1] 静态类型为A，直接调用A的testfuc
+        func();                 // [Step2] 非虚函数func，继续静态绑定到A::func
+    }
+
+    // 非虚函数：派生类B中的func会隐藏此函数，但通过A类型调用时仍选此版本
+    void func() {  
+        cout << "A::func ";     // [Step3] 静态绑定到A::func
+        vfunc();                // [Step4] 虚函数vfunc，动态绑定到实际对象类型
+    }
+
+    // 虚函数：动态绑定，实际调用由对象类型决定
+    virtual void vfunc() {  
+        cout << "A::vf" << endl;
+    }
 };
 
-void test01() {
-	//普通实现测试
-	Calculator c;
-	c.m_Num1 = 10;
-	c.m_Num2 = 10;
-	cout << c.m_Num1 << " + " << c.m_Num2 << " = " << c.getResult("+") << endl;
-	cout << c.m_Num1 << " - " << c.m_Num2 << " = " << c.getResult("-") << endl;
-	cout << c.m_Num1 << " * " << c.m_Num2 << " = " << c.getResult("*") << endl;
-}
+class B : public A {
+public:
+    // 非虚函数：隐藏A::func（非重写），仅通过B类型调用时生效
+    void func() {  
+        cout << "B::func" << endl;
+    }
 
-
-//多态实现
-//抽象计算器类
-//多态优点：代码组织结构清晰，可读性强，利于前期和后期的扩展以及维护
-class AbstractCalculator {
-	public :
-		virtual int getResult() {
-			return 0;
-		}
-		int m_Num1;
-		int m_Num2;
+    // 虚函数重写：覆盖A::vfunc，通过基类指针调用时动态绑定到此版本
+    virtual void vfunc() override {  
+        cout << "B::vf" << endl;
+    }
 };
-
-//加法计算器
-class AddCalculator :public AbstractCalculator {
-	public:
-		int getResult() {
-			return m_Num1 + m_Num2;
-		}
-};
-
-//减法计算器
-class SubCalculator :public AbstractCalculator {
-	public:
-		int getResult() {
-			return m_Num1 - m_Num2;
-		}
-};
-
-//乘法计算器
-class MulCalculator :public AbstractCalculator {
-	public:
-		int getResult() {
-			return m_Num1 * m_Num2;
-		}
-};
-
-void test02() {
-	//创建加法计算器
-	AbstractCalculator *abc = new AddCalculator;
-	abc->m_Num1 = 10;
-	abc->m_Num2 = 10;
-	cout << abc->m_Num1 << " + " << abc->m_Num2 << " = " << abc->getResult() << endl;
-	delete abc;  //用完了记得销毁
-
-	//创建减法计算器
-	abc = new SubCalculator;
-	abc->m_Num1 = 10;
-	abc->m_Num2 = 10;
-	cout << abc->m_Num1 << " - " << abc->m_Num2 << " = " << abc->getResult() << endl;
-	delete abc;
-
-	//创建乘法计算器
-	abc = new MulCalculator;
-	abc->m_Num1 = 10;
-	abc->m_Num2 = 10;
-	cout << abc->m_Num1 << " * " << abc->m_Num2 << " = " << abc->getResult() << endl;
-	delete abc;
-}
 
 int main() {
-	//test01();
-	test02();
-	return 0;
+    A a;
+    a.func();cout<<endl;  
+    // 输出：A::func A::vf
+
+    B b;
+    b.func();   
+    // 输出：B::func
+    b.testfuc();cout<<endl; // 从A继承的非虚函数testfuc → A::testfuc → A::func → 动态绑定B::vfunc
+    // 输出：A::testfuc A::func B::vf
+
+    A* p = &b;
+    p->vfunc();    // 虚函数 → 动态绑定B::vfunc
+    // 输出：B::vf
+
+    p->testfuc();  // 非虚函数A::testfuc → A::func → 动态绑定B::vfunc
+    // 输出：A::testfuc A::func B::vf
+
+    p->func();     // 非虚函数 → 静态绑定A::func → 动态绑定B::vfunc
+    // 输出：A::func B::vf
+    return 0;
 }
 ```
 
+> **总结：**
+>
+> 非虚函数看"标签"，回基类；
+>
+> 虚函数看“实际内容”，在派生类。
+>
+
+**习题2：**
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class Base {
+ public:
+  void foo() {
+    cout << "Base::foo()\n";
+    bar();
+    baz();
+  }
+
+  virtual void bar() {
+    cout << "Base::bar()\n";
+  }
+
+  void baz() {
+    cout << "Base::baz()\n";
+  }
+};
+
+class Derived : public Base {
+ public:
+  void foo() {
+    cout << "Derived::foo()\n";
+    bar();
+    Base::baz();
+  }
+
+  virtual void bar() override {
+    cout << "Derived::bar()\n";
+  }
+
+  void baz() {
+    cout << "Derived::baz()\n";
+  }
+};
+
+class DeepDerived : public Derived {
+ public:
+  void foo() {
+    cout << "DeepDerived::foo()\n";
+    bar();
+    Derived::bar();
+  }
+
+  void bar() override {
+    cout << "DeepDerived::bar()\n";
+  }
+  virtual void baz() {
+    cout << "DeepDerived::baz()\n";
+  }
+};
+
+int main() {
+  DeepDerived dd;
+  Base* p1= &dd;
+  Derived* p2 = &dd;
+
+  cout << "=== Test 1 ===" << endl;
+  p1->foo();
+
+  cout << "\n=== Test 2 ===" << endl;
+  p2->foo();
+
+  cout << "\n=== Test 3 ===" << endl;
+  dd.foo();
+
+  cout << "\n=== Test 4 ===" << endl;
+  p1->baz();
+  p2->baz();
+  dd.baz();
+
+  return 0;
+}
+```
+
+> 输出：
+>
+> === Test 1 ===
+>
+> Base::foo()
+>
+> DeepDerived::bar()
+>
+> Base::baz()
+>
+> 
+>
+> === Test 2 ===
+>
+> Derived::foo()
+>
+> DeepDerived::bar()
+>
+> Base::baz()
+>
+> 
+>
+> === Test 3 ===
+>
+> DeepDerived::foo()
+>
+> DeepDerived::bar()
+>
+> Derived::bar()
+>
+> 
+>
+> === Test 4 ===
+>
+> Base::baz()
+>
+> Derived::baz()
+>
+> DeepDerived::baz()
+>
+
+**总结的总结：**
+
+1.明确对象的“标签”和“实际内容”，判断对象是不是纯粹的（标签与实际一致）
+
+2.回到**“标签”的基类**看看这个函数是否为（非）虚函数，**虚函数**用**实际内容**对应的域，**非虚函数**用**标签**对应的域。
 
 
 
@@ -5647,7 +6242,37 @@ int main() {
 
 
 
+#### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">对象切片</font>
+<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">对象切片发生在将派生类对象赋值给基类对象时，导致派生类特有的成员数据丢失。这是因为基类对象仅能存储基类部分的成员，而派生类新增的成员会被“切掉”。</font>
 
+**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">示例：</font>**
+
+```cpp
+class Base {
+public:
+    int a;
+};
+
+class Derived : public Base {
+public:
+    int b; // 派生类新增成员
+};
+
+Derived d;
+Base b = d; // 对象切片：b 仅保留 Base::a，Derived::b 被丢弃
+```
+
+**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">关键点：</font>**
+
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">原因</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：直接对对象进行值传递或赋值时，编译器仅复制基类部分。</font>
++ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">解决方法</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：使用基类的指针或引用，保持多态性：</font>
+
+```cpp
+Base& ref = d;     // 通过引用访问，避免切片
+Base* ptr = &d;    // 通过指针访问，避免切片
+```
+
+#### 
 
 
 
@@ -5666,7 +6291,7 @@ int main() {
 **抽象类特点**：
 
 + 无法实例化对象
-+ 子类必须重写抽象类中的纯虚函数，否则也属于抽象类
++ 子类必须覆盖抽象类中的纯虚函数，否则也属于抽象类
 
 **示例：**
 
@@ -5732,22 +6357,24 @@ int main() {
 **示例：**
 
 ```cpp
+#include <iostream>
+using namespace std;
 class Animal {
-	public:
-		Animal() {
-			cout << "Animal 构造函数调用！" << endl;
-		}
-		virtual void Speak() = 0;
-//析构函数加上virtual关键字，变成虚析构函数
-//virtual ~Animal()
-//{
-//	cout << "Animal虚析构函数调用！" << endl;
-//}
-		virtual ~Animal() = 0;
+ public:
+  Animal() {
+    cout << "Animal 构造函数调用！" << endl;
+  }
+  virtual void Speak() = 0;
+  //析构函数加上virtual关键字，变成虚析构函数
+  //virtual ~Animal()
+  //{
+  //	cout << "Animal虚析构函数调用！" << endl;
+  //}
+  virtual ~Animal() = 0;
 };
 
 Animal::~Animal() {
-	cout << "Animal 纯虚析构函数调用！" << endl;
+  cout << "Animal 纯虚析构函数调用！" << endl;
 }
 
 //和包含普通纯虚函数的类一样，包含了纯虚析构函数的类也是一个抽象类。不能够被实例化。
@@ -5806,158 +6433,99 @@ int main() {
 
 
 
-
-
-#### 多态案例三-电脑组装
-**案例描述：**
-
-电脑主要组成部件为 CPU（用于计算），显卡（用于显示），内存条（用于存储）
-
-将每个零件封装出抽象基类，并且提供不同的厂商生产不同的零件，例如Intel厂商和Lenovo厂商
-
-创建电脑类提供让电脑工作的函数，并且调用每个零件工作的接口
-
-测试时组装三台不同的电脑进行工作
-
-**示例：**
+## 类模版
+代码示例：
 
 ```cpp
-#include<iostream>
+#include <iostream>
+#include <stdexcept>
+#include <vector>
 using namespace std;
-//抽象CPU类
-class CPU {
-	public:
-//抽象的计算函数
-		virtual void calculate() = 0;
+
+template <typename T>
+class Stack;
+
+// 模版化的友元函数必须前向声明
+template <typename T>
+ostream& operator>>(ostream& os, Stack<T>& stack);
+
+template <typename T, int MaxSize = 0>
+class myStack {
+ private:
+  std::vector<T> elements;
+
+ public:
+  myStack() {
+    ++instance_count;
+  }
+
+  void push(T const& element);
+
+  T top() const {
+    if (empty()) {
+      throw std::out_of_range("Stack<>::top(): empty stack");
+    }
+    return elements.back();
+  }
+
+  void pop() {
+    if (empty()) {
+      throw std::out_of_range("Stack<>::pop(): empty stack");
+    }
+    elements.pop_back();
+  }
+
+  bool empty() const {
+    return elements.empty();
+  }
+
+  friend ostream& operator>> (ostream& os, myStack<T>& stack){
+    for (const auto& elem : stack.elements) {
+      os << elem << " ";
+    }
+    return os;
+  }
+
+  // 静态成员,每个模板特化类拥有独立的静态成员。
+  static int instance_count;
 };
 
-//抽象显卡类
-class VideoCard {
-	public:
-//抽象的显示函数
-		virtual void display() = 0;
-};
+// 外部成员函数定义，注意形式 类名<T>::
+template <typename T, int MaxSize>
+void myStack<T, MaxSize>::push(T const& element) {
+  if constexpr (MaxSize > 0) {
+    if (elements.size() >= MaxSize) {
+      throw std::out_of_range("Stack is full");
+    }
+  }
+  elements.push_back(element);
+}
 
-//抽象内存条类
-class Memory {
-	public:
-//抽象的存储函数
-		virtual void storage() = 0;
-};
+// 初始化静态成员
+template <typename T, int MaxSize>
+int myStack<T, MaxSize>::instance_count = 0;
 
-//电脑类
-class Computer {
-	public:
-		Computer(CPU * cpu, VideoCard * vc, Memory * mem) {
-			m_cpu = cpu;
-			m_vc = vc;
-			m_mem = mem;
-		}
+int main() {
+  myStack<int> intStack;   // 等价于 myStack<int, 0>,使用了默认的
+  myStack<int> intStack2;  //同种类还是一个静态成员
+  intStack.push(42);
+  intStack.push(7);
 
-//提供工作的函数
-		void work() {
-			//让零件工作起来，调用接口
-			m_cpu->calculate();
-			m_vc->display();
-			m_mem->storage();
-		}
+  myStack<std::string, 3> strStack;  // 最大容量3
+  try {
+    strStack.push("Hello");
+    strStack.push("Template");
+    strStack.push("World");
+    strStack.push("Extra");  // 这里会抛出异常
+  } catch (std::exception const& e) {
+    std::cout << "Exception: " << e.what() << std::endl;
+  }
 
-//提供析构函数 释放3个电脑零件
-		~Computer() {
-			//释放CPU零件
-			if (m_cpu != NULL) {
-				delete m_cpu;
-				m_cpu = NULL;
-			}
-			//释放显卡零件
-			if (m_vc != NULL) {
-				delete m_vc;
-				m_vc = NULL;
-			}
-			//释放内存条零件
-			if (m_mem != NULL) {
-				delete m_mem;
-				m_mem = NULL;
-			}
-		}
-	private:
-		CPU * m_cpu; //CPU的零件指针
-		VideoCard * m_vc; //显卡零件指针
-		Memory * m_mem; //内存条零件指针
-};
+  myStack<double> anotherStack;
+  std::cout << myStack<double>::instance_count << " " << myStack<double>::instance_count << std::endl;
+  //输出：2 1
 
-//具体厂商
-//Intel厂商
-class IntelCPU :public CPU {
-	public:
-		virtual void calculate() {
-			cout << "Intel的CPU开始计算了！" << endl;
-		}
-};
-
-class IntelVideoCard :public VideoCard {
-	public:
-		virtual void display() {
-			cout << "Intel的显卡开始显示了！" << endl;
-		}
-};
-
-class IntelMemory :public Memory {
-	public:
-		virtual void storage() {
-			cout << "Intel的内存条开始存储了！" << endl;
-		}
-};
-
-//Lenovo厂商
-class LenovoCPU :public CPU {
-	public:
-		virtual void calculate() {
-			cout << "Lenovo的CPU开始计算了！" << endl;
-		}
-};
-
-class LenovoVideoCard :public VideoCard {
-	public:
-		virtual void display() {
-			cout << "Lenovo的显卡开始显示了！" << endl;
-		}
-};
-
-class LenovoMemory :public Memory {
-	public:
-		virtual void storage() {
-			cout << "Lenovo的内存条开始存储了！" << endl;
-		}
-};
-
-
-void test01() {
-	//第一台电脑零件
-	CPU * intelCpu = new IntelCPU;
-	VideoCard * intelCard = new IntelVideoCard;
-	Memory * intelMem = new IntelMemory;
-
-	cout << "第一台电脑开始工作：" << endl;
-	//创建第一台电脑
-	Computer * computer1 = new Computer(intelCpu, intelCard, intelMem);
-	computer1->work();
-	delete computer1;
-
-	cout << "-----------------------" << endl;
-	cout << "第二台电脑开始工作：" << endl;
-	//第二台电脑组装
-	Computer * computer2 = new Computer(new LenovoCPU, new LenovoVideoCard, new LenovoMemory);;
-	computer2->work();
-	delete computer2;
-
-	cout << "-----------------------" << endl;
-	cout << "第三台电脑开始工作：" << endl;
-	//第三台电脑组装
-	Computer * computer3 = new Computer(new LenovoCPU, new IntelVideoCard, new LenovoMemory);;
-	computer3->work();
-	delete computer3;
-
+  return 0;
 }
 ```
 
@@ -5975,10 +6543,353 @@ void test01() {
 
 
 
+## 链表
+```cpp
+#include <iostream>
+
+template<typename NODETYPE>
+class ListNode {
+public:
+    NODETYPE data;
+    ListNode<NODETYPE>* nextPtr;
+
+    ListNode(const NODETYPE& value) : data(value), nextPtr(nullptr) {}
+};
+
+template<typename NODETYPE>
+class List {
+private:
+    ListNode<NODETYPE>* firstPtr; // 首节点指针
+    ListNode<NODETYPE>* lastPtr;  // 尾节点指针（用于优化插入）
+
+    // 创建新节点工具函数
+    ListNode<NODETYPE>* getNewNode(const NODETYPE& value) {
+        return new ListNode<NODETYPE>(value);
+    }
+
+public:
+    // 构造函数
+    List() : firstPtr(nullptr), lastPtr(nullptr) {}
+
+    // 析构函数：释放所有节点内存
+    ~List() {
+        if (!isEmpty()) {
+            std::cout << "Destroying nodes...\n";
+            ListNode<NODETYPE>* currentPtr = firstPtr;
+            while (currentPtr != nullptr) {
+                ListNode<NODETYPE>* tempPtr = currentPtr;
+                std::cout << tempPtr->data << '\n';
+                currentPtr = currentPtr->nextPtr;
+                delete tempPtr;
+            }
+        }
+        std::cout << "All nodes destroyed\n\n";
+    }
+
+    // 判断链表是否为空
+    bool isEmpty() const {
+        return firstPtr == nullptr;
+    }
+
+    // 打印所有节点数据
+    void print() const {
+        if (isEmpty()) {
+            std::cout << "The list is empty\n\n";
+            return;
+        }
+
+        ListNode<NODETYPE>* currentPtr = firstPtr;
+        std::cout << "The list is: ";
+        while (currentPtr != nullptr) {
+            std::cout << currentPtr->data << ' ';
+            currentPtr = currentPtr->nextPtr;
+        }
+        std::cout << "\n\n";
+    }
+
+    // 头部插入节点
+    void insertAtFront(const NODETYPE& value) {
+        ListNode<NODETYPE>* newNode = getNewNode(value);
+        if (isEmpty()) {
+            firstPtr = lastPtr = newNode;
+        } else {
+            newNode->nextPtr = firstPtr;
+            firstPtr = newNode;
+        }
+    }
+
+    // 尾部插入节点（使用 lastPtr 优化）
+    void insertAtBack(const NODETYPE& value) {
+        ListNode<NODETYPE>* newNode = getNewNode(value);
+        if (isEmpty()) {
+            firstPtr = lastPtr = newNode;
+        } else {
+            lastPtr->nextPtr = newNode;
+            lastPtr = newNode;
+        }
+    }
+};
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 零散题目
+### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">题目1：构造/析构顺序与虚函数</font>**
+```cpp
+class Base {
+public:
+    Base() { callVirtual(); }
+    virtual ~Base() { cout << "~Base "; }
+    virtual void callVirtual() { cout << "Base "; }
+};
+
+class Derived : public Base {
+public:
+    Derived() { callVirtual(); }
+    ~Derived() { cout << "~Derived "; }
+    void callVirtual() override { cout << "Derived "; }
+};
+
+Derived d; // 输出什么？
+```
+
+**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">答案与考察点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
+</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">输出：</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">Base Derived ~Derived ~Base</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
+</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">隐蔽点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：构造函数中虚函数机制未生效（此时对象类型仍视为</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">Base</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">）</font>
+
+
+
+### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">题目2：继承中的对象切片</font>**
+```cpp
+class Animal {
+public:
+    virtual void speak() { cout << "Animal "; }
+};
+
+class Cat : public Animal {
+public:
+    void speak() override { cout << "Cat "; }
+    void groom() { cout << "Grooming "; }
+};
+
+void process(Animal a) {
+    a.speak();
+}
+
+Cat c;
+process(c); // 输出什么？能否调用c.groom()？
+```
+
+**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">答案与考察点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
+</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">输出：</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">Animal</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
+</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">隐蔽点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：值传递导致对象切片，丢失派生类信息；groom()不可访问</font>
+
+---
+
+### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">题目3：成员初始化顺序</font>**
+```cpp
+class Clock {
+    int hours = initHours();
+    int minutes = 30;
+public:
+    Clock() : minutes(0) {}
+    int initHours() { return minutes + 1; }
+};
+```
+
+`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">Clock</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">对象构造后，hours和minutes的值分别是多少？  
+</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">答案与考察点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
+</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">hours=1, minutes=0  
+</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">隐蔽点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：初始化顺序按声明顺序（先hours后minutes），覆盖初始化列表</font>
+
+
+
+### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">题目4：虚函数表与内存布局</font>**
+```cpp
+class Empty {};
+class WithVirtual { virtual void f() {} };
+```
+
+`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">sizeof(Empty)</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">和</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">sizeof(WithVirtual)</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">的值为？若继承多个含虚函数的类，大小如何变化？  
+</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">答案与考察点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
+</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">1（空类）、8（64位指针）  
+</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">隐蔽点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：虚函数表指针的存在；多重继承可能增加多个vptr</font>
+
+
+
+### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">题目5：静态绑定与默认参数</font>**
+```cpp
+class Shape {
+public:
+    virtual void draw(int thickness=1) {
+        cout << "Shape:" << thickness << " ";
+    }
+};
+
+class Circle : public Shape {
+public:
+    void draw(int thickness=5) override {
+        cout << "Circle:" << thickness << " ";
+    }
+};
+
+Shape* p = new Circle();
+p->draw(); // 输出什么？
+```
+
+**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">答案与考察点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
+</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">Circle:1</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
+</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">隐蔽点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：默认参数静态绑定（根据</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">Shape</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">类型），函数动态绑定</font>
+
+
+
+### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">题目6：移动语义陷阱</font>**
+```cpp
+class Buffer {
+    int* data;
+public:
+    Buffer() : data(new int[1024]) {}
+    Buffer(Buffer&& other) : data(other.data) {
+        other.data = nullptr;
+    }
+    ~Buffer() { delete[] data; }
+};
+
+Buffer createBuffer() {
+    Buffer local;
+    return local; 
+}
+
+Buffer b = createBuffer(); // 调用几次构造函数？
+```
+
+**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">答案与考察点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
+</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">1次（RVO优化）  
+</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">隐蔽点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：移动构造可能被编译器优化完全跳过</font>
+
+
+
+### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">题目7：类型转换运算符</font>**
+```cpp
+class Meter {
+    double value;
+public:
+    explicit operator int() { return value; }
+    operator double() { return value; }
+};
+
+Meter m{2.5};
+double d = m; 
+int i = m;    // 哪行编译错误？
+```
+
+**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">答案与考察点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
+</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">int i = m</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">错误  
+</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">隐蔽点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：explicit转换必须显式调用（如</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">static_cast<int>(m)</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">）</font>
+
+---
+
+### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">题目8：模板类的静态成员</font>**
+```cpp
+template<typename T>
+class Counter {
+public:
+    static int count;
+    Counter() { count++; }
+};
+template<> int Counter<int>::count = 0;
+
+Counter<int> a, b;
+Counter<double> c;
+```
+
+`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">Counter<int>::count</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">和</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">Counter<double>::count</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">的值分别为？  
+</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">答案与考察点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
+</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">2 和 1  
+</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">隐蔽点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：模板特化导致不同模板参数的静态成员独立存在</font>
+
+
+
+### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">题目9：析构函数多态</font>**
+```cpp
+class Base {
+public:
+    ~Base() { cout << "Base "; }
+};
+
+class Derived : public Base {
+public:
+    ~Derived() { cout << "Derived "; }
+};
+
+Base* p = new Derived();
+delete p; // 输出什么？如何修正？
+```
+
+**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">答案与考察点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
+</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">输出</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">Base </font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">（资源泄漏）  
+</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">隐蔽点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：基类析构函数未声明为virtual导致派生类析构未调用</font>
+
+
+
+### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">题目10：const成员函数</font>**
+```cpp
+class Data {
+    mutable int accessCount = 0;
+    int value = 42;
+public:
+    void modify() const { 
+        accessCount++; 
+        value = 0;     // 是否合法？
+    }
+};
+```
+
+**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">答案与考察点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
+</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">accessCount++</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">合法（mutable修饰），</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(243, 243, 243);">value=0</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">不合法  
+</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">隐蔽点</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：const成员函数对mutable成员的可修改性</font>
+
+  
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 文件操作
 程序运行时产生的数据都属于临时数据，程序一旦运行结束都会被释放，通过文件可以将**数据持久化**，对文件操作需要包含头文件 **< fstream >**。
-
-
 
 文件类型分为两种：
 
@@ -6232,6 +7143,672 @@ int main() {
 
 
 
+### 文件和流（Files and Streams）
+**<font style="color:rgb(17, 24, 39);">流（Stream） </font>**<font style="color:rgb(44, 44, 54);">：字节序列，用于数据传输。</font>
+
++ <font style="color:rgb(17, 24, 39);">输入流（Input Stream） </font><font style="color:rgb(44, 44, 54);">：数据从外部设备流向内存（如键盘、文件读取）。</font>
++ <font style="color:rgb(17, 24, 39);">输出流（Output Stream） </font><font style="color:rgb(44, 44, 54);">：数据从内存流向外部设备（如屏幕、文件写入）。</font>
+
+**<font style="color:rgb(17, 24, 39);">C++文件流类 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
++ **<font style="color:rgb(17, 24, 39);">头文件 </font>**<font style="color:rgb(44, 44, 54);">：</font>`#include <fstream>`<font style="color:rgb(44, 44, 54);">。</font>
++ **<font style="color:rgb(17, 24, 39);">类模板特化 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+    - `ifstream`<font style="color:rgb(44, 44, 54);">：文件输入流（读文件）。</font>
+    - `ofstream`<font style="color:rgb(44, 44, 54);">：文件输出流（写文件）。</font>
+    - `fstream`<font style="color:rgb(44, 44, 54);">：文件输入输出流（支持读写）。</font>
+
+**<font style="color:rgb(17, 24, 39);">流继承关系 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+ ios → istream/ostream → <font style="color:rgb(44, 44, 54);">iostream </font>
+
+<font style="color:rgb(44, 44, 54);">→ ifstream/ofstream → fstream</font>
+
+**<font style="color:rgb(17, 24, 39);">标准流对象 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+`cin`（输入）、`cout`（输出）、`cerr`（错误输出）。
+
+
+
+
+
+### 创建顺序文件
+**<font style="color:rgb(17, 24, 39);">步骤 </font>**<font style="color:rgb(44, 44, 54);"></font>
+
+1. **<font style="color:rgb(17, 24, 39);">定义文件流对象 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+```cpp
+ofstream outClientFile;
+```
+
+2. **<font style="color:rgb(17, 24, 39);">打开文件 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+**<font style="color:rgb(44, 44, 54);">方式一</font>**<font style="color:rgb(44, 44, 54);">：构造函数直接打开。</font>
+
+```cpp
+ofstream outClientFile("clients.dat", ios::out);
+```
+
+**<font style="color:rgb(44, 44, 54);">方式二</font>**<font style="color:rgb(44, 44, 54);">：先定义对象，后调用</font>`open`<font style="color:rgb(44, 44, 54);">函数。</font>
+
+```cpp
+outClientFile.open("clients.dat", ios::out);
+```
+
+3. **<font style="color:rgb(17, 24, 39);">文件模式（Mode） </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+`ios::out`：默认模式，若文件存在则清空内容，若不存在则创建。
+
+`ios::app`：在文件末尾追加数据。
+
+4. **<font style="color:rgb(17, 24, 39);">写入数据 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+```cpp
+outClientFile << account << ' ' << name << ' ' << balance << endl;
+```
+
+<font style="color:rgb(44, 44, 54);">需用空格分隔数据（便于后续读取）。</font>
+
+5. **<font style="color:rgb(17, 24, 39);">关闭文件 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+```cpp
+outClientFile.close();
+```
+
+<font style="color:rgb(44, 44, 54);">析构函数自动关闭文件，但建议显式调用</font>`close()`。
+
+
+
+
+
+### 从顺序文件读取数据
+**<font style="color:rgb(17, 24, 39);">步骤 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+1. **<font style="color:rgb(17, 24, 39);">定义文件流对象 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+```cpp
+ifstream inClientFile;
+```
+
+2. **<font style="color:rgb(17, 24, 39);">打开文件 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+```cpp
+ifstream inClientFile("clients.dat", ios::in);
+```
+
+3. **<font style="color:rgb(17, 24, 39);">读取数据 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+```cpp
+inClientFile >> account >> name >> balance;
+```
+
+<font style="color:rgb(44, 44, 54);">需按写入时的格式读取（空格分隔）。</font>
+
+4. **<font style="color:rgb(17, 24, 39);">判断文件结束 （</font>**使用`eof()`函数）<font style="color:rgb(44, 44, 54);">：</font>
+
+```cpp
+while (!inClientFile.eof()) {// 处理数据}
+```
+
+**<font style="color:rgb(17, 24, 39);">注意事项 </font>**<font style="color:rgb(44, 44, 54);">：文件末尾需有空行，否则可能忽略最后一行数据。</font>
+
+5. **<font style="color:rgb(17, 24, 39);">重新定位文件指针 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+`seekg()`：移动输入流的“get指针”。
+
+`seekp()`：移动输出流的“put指针”。
+
+`tellg()`：获取当前“get指针”位置。
+
+`tellg()`：获取当前“put指针”位置。
+
+```cpp
+inClientFile.seekg(0); // 回到文件开头
+inClientFile.clear(); // 清除EOF标志
+```
+
+6. **<font style="color:rgb(17, 24, 39);">文件指针偏移方式 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+`ios::beg`：从文件开头偏移。
+
+`ios::cur`：从当前位置偏移。
+
+`ios::end`：从文件末尾偏移。
+
+
+
+### 代码示例（若没有文件，创建文件）
+```cpp
+#include <fstream>
+#include <iostream>
+using namespace std;
+
+int main() {
+    string filename;
+    cout << "输入文件名 (如：file.dat): ";
+    cin >> filename;
+
+    // 尝试以读写模式打开文件，若不存在则创建
+    fstream file(filename, ios::in | ios::out | ios::binary);
+    if (!file) {
+        ofstream createFile(filename, ios::binary);
+        if (!createFile) {
+            cerr << "无法创建文件!" << endl;
+            return 1;
+        }
+        createFile.close();
+        file.open(filename, ios::in | ios::out | ios::binary);
+    }
+
+    // 连续写入三个字符，指针自动移动
+  char data[] = {'a', 'b', 'c'};
+  file.write(data, sizeof(data));  // 写入后指针在位置3
+  file.seekp(0);  // 确保写入后指针重置
+  file.seekg(0);  // 重置指针到开头以便读取
+
+  // 阶段1：读取并修改数据
+  cout << "----- 修改阶段 -----" << endl;
+  char ch;
+  while (file.read(&ch, sizeof(ch))) {
+    // 显示读取信息
+    cout << "读取字符: " << ch << " | 指针位置: " << file.tellg() << endl;
+
+    // 修改数据
+    ch += 1;
+    file.seekp(-1, ios::cur);  // 回退写指针
+    file.write(&ch, 1);        // 写入修改后的字符
+    file.seekg(file.tellp());  // 同步读指针到当前写位置
+  }
+
+  // 阶段2：重新读取验证
+  cout << "\n----- 验证阶段 -----" << endl;
+  file.clear();   // 清除eof状态
+  file.seekg(0);  // 重置到文件开头
+
+  while (file.read(&ch, 1)) {
+    cout << "最终字符: " << ch << " | 指针位置: " << file.tellg() << endl;
+  }
+
+    file.close();
+    return 0;
+}
+```
+
+<font style="color:rgb(44, 44, 54);"></font>
+
+<font style="color:rgb(44, 44, 54);"></font>
+
+### 随机存取文件
+**<font style="color:rgb(17, 24, 39);">特点 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+<font style="color:rgb(44, 44, 54);">1.支持直接访问文件中任意记录（无需顺序读取）。</font>
+
+<font style="color:rgb(44, 44, 54);">2.需固定记录大小（二进制模式写入）。</font>
+
+**<font style="color:rgb(17, 24, 39);">实现步骤 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+1. **<font style="color:rgb(17, 24, 39);">定义数据结构 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+```cpp
+class ClientData {
+public:
+    int accountNumber;
+    char name[15]; // 固定长度字段
+    double balance;
+};
+```
+
+2. **<font style="color:rgb(17, 24, 39);">写入二进制文件 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+```cpp
+ofstream outCredit("credit.dat", ios::out | ios::binary);
+ClientData client = {100, "yang", 99.9};
+outCredit.write(reinterpret_cast<const char*>(&client), sizeof(ClientData));
+```
+
+3. **<font style="color:rgb(17, 24, 39);">读取二进制文件 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+```cpp
+ifstream inCredit("credit.dat", ios::in | ios::binary);
+ClientData client;
+inCredit.read(reinterpret_cast<char*>(&client), sizeof(ClientData));
+```
+
+4. **<font style="color:rgb(17, 24, 39);">定位特定记录 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
+读取第`N`条记录：
+
+```cpp
+cpp1inCredit.seekg(sizeof(ClientData) * (N - 1));
+```
+
+写入第`N`条记录：
+
+```cpp
+fstream file("credit.dat", ios::in | ios::out | ios::binary);
+file.seekp(sizeof(ClientData) * (N - 1));
+```
+
+
+
+### 综合示例
+```cpp
+#include "filehandler.h"
+#include <fstream>
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+static int findRecordPosition(std::fstream& file, int targetId) {
+    file.clear();
+    file.seekg(0);
+    Student s ;
+    int position = 0;
+    while (file.read(reinterpret_cast<char*>(&s), sizeof(Student))) {
+        if (s.getId() == targetId) {
+            return position;
+        }
+        position++;
+    }
+    return -1;
+}
+
+static bool idExists(std::fstream& file, int id) {
+    file.clear();
+    file.seekg(0);
+
+    Student s ;
+    while (file.read(reinterpret_cast<char*>(&s), sizeof(Student))) {
+        if (s.getId() == id && s.getId() != 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void displayRecords(std::fstream& file) {
+    file.clear();  
+    file.seekg(0);
+    Student s ;
+    int count = 0;
+    double total = 0.0;
+
+    while (file.read(reinterpret_cast<char*>(&s), sizeof(Student))) {
+        if (s.getId() != 0) {
+            std::cout << "ID: " << s.getId() << "\n"
+                << "姓名: " << s.getFirstName() << " " << s.getLastName() << "\n"
+                << "成绩: " << std::fixed << std::setprecision(1) << s.getGrade() << "\n\n";
+            total += s.getGrade();
+            count++;
+        }
+    }
+
+    if (count > 0) {
+        std::cout << "平均成绩: " << (total / count) << "\n";
+    }
+    else {
+        std::cout << "暂无记录.\n";
+    }
+}
+
+void addRecord(std::fstream& file) {
+    file.clear();
+    file.seekg(0);
+    int id;
+    std::string fname, lname;
+    double grade;
+
+    std::cout << "输入学生ID: ";
+    std::cin >> id;
+    std::cin.ignore();
+
+    std::cout << "输入姓氏: ";
+    std::getline(std::cin, fname);
+    std::cout << "输入名字: ";
+    std::getline(std::cin, lname);
+    std::cout << "输入成绩: ";
+    std::cin >> grade;
+
+    Student temp=Student(0," "," ",0);
+    int position = -1;
+    file.seekg(0);
+    while (file.read(reinterpret_cast<char*>(&temp), sizeof(Student))) {
+        if (temp.getId() == 0) {
+            position = static_cast<int>(file.tellg()) / sizeof(Student) - 1;
+            break;
+        }
+    }
+
+    Student newStudent(id, fname, lname, grade);
+    if (position != -1) {
+        file.seekp(position * sizeof(Student));
+    }
+    else {
+        file.clear();
+        file.seekp(0, std::ios::end);
+    }
+
+    file.write(reinterpret_cast<const char*>(&newStudent), sizeof(Student));
+    std::cout << "输入完毕.\n";
+}
+
+void deleteRecord(std::fstream& file) {
+    file.clear();
+    file.seekg(0);
+    int targetId;
+    std::cout << "输入要删除的ID: ";
+    std::cin >> targetId;
+
+    int pos = findRecordPosition(file, targetId);
+    if (pos == -1) {
+        std::cout << "无法找到该ID.\n";
+        return;
+    }
+
+    Student blank;
+    file.seekp(pos * sizeof(Student));
+    file.write(reinterpret_cast<const char*>(&blank), sizeof(Student));
+    std::cout << "记录已删除.\n";
+}
+
+void modifyRecord(std::fstream& file) {
+    file.clear();
+    file.seekg(0);
+    int targetId;
+    std::cout << "输入需要修改的ID: ";
+    std::cin >> targetId;
+
+    int pos = findRecordPosition(file, targetId);
+    if (pos == -1) {
+        std::cout << "无法找到该ID.\n";
+        return;
+    }
+
+    Student s ;
+    file.seekg(pos * sizeof(Student));
+    file.read(reinterpret_cast<char*>(&s), sizeof(Student));
+
+    int newId;
+    std::string fname, lname;
+    float grade;
+
+    std::cout << "输入新ID ( " << s.getId() << "): ";
+    std::cin >> newId;
+    if (newId != targetId ) {
+        std::cout << "错误：该ID已存在！\n";
+        return;
+    }
+
+    std::cin.ignore();
+    std::cout << "输入姓氏 ( " << s.getFirstName() << "): ";
+    std::getline(std::cin, fname);
+    std::cout << "输入名称 ( " << s.getLastName() << "): ";
+    std::getline(std::cin, lname);
+    std::cout << "输入成绩 ( " << s.getGrade() << "): ";
+    std::cin >> grade;
+
+    s.setId(newId);
+    s.setFirstName(fname);
+    s.setLastName(lname);
+    s.setGrade(grade);
+
+    file.seekp(pos * sizeof(Student));
+    file.write(reinterpret_cast<const char*>(&s), sizeof(Student));
+    std::cout << "记录已更新\n";
+}
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 异常处理
+![](https://cdn.nlark.com/yuque/0/2025/png/50259711/1747707517325-cf80dc8c-932f-41da-9f49-79570de0af5e.png)
+
+### 处理流程
+#### <font style="color:rgb(17, 24, 39);">try 块 </font><font style="color:rgb(44, 44, 54);">：</font>
+<font style="color:rgb(44, 44, 54);">包裹可能抛出异常的代码。若 try 块内未抛出异常，程序继续执行后续代码。</font>
+
+#### <font style="color:rgb(17, 24, 39);">throw 表达式 </font><font style="color:rgb(44, 44, 54);">：</font>
+<font style="color:rgb(44, 44, 54);">抛出异常时，程序立即终止当前函数的执行，并沿调用链向上查找匹配的 </font>`**<font style="color:rgb(97, 92, 237);background-color:rgb(239, 238, 255);">catch</font>**`<font style="color:rgb(44, 44, 54);"> 块。</font>
+
+#### <font style="color:rgb(17, 24, 39);">catch 块 </font><font style="color:rgb(44, 44, 54);">：</font>
+<font style="color:rgb(44, 44, 54);">捕获并处理特定类型的异常。支持多态匹配（如 </font>`**<font style="color:rgb(97, 92, 237);background-color:rgb(239, 238, 255);">catch (const exception& e)</font>**`<font style="color:rgb(44, 44, 54);"> 可捕获所有标准异常派生类）。</font>
+
+#### <font style="color:rgb(17, 24, 39);">终止模型（Termination Model） </font><font style="color:rgb(44, 44, 54);">：</font>
+<font style="color:rgb(44, 44, 54);">异常未被捕获时，程序调用 </font>`**<font style="color:rgb(97, 92, 237);background-color:rgb(239, 238, 255);">terminate()</font>**`<font style="color:rgb(44, 44, 54);"> 终止（默认调用 </font>`**<font style="color:rgb(97, 92, 237);background-color:rgb(239, 238, 255);">abort()</font>**`<font style="color:rgb(44, 44, 54);">）。</font>
+
+**<font style="color:rgb(17, 24, 39);">流程 </font>**<font style="color:rgb(44, 44, 54);">：</font>
+
++ <font style="color:rgb(44, 44, 54);">抛出异常 → 终止当前函数 → 栈展开 → 查找匹配的 </font>`**<font style="color:rgb(97, 92, 237);background-color:rgb(239, 238, 255);">catch</font>**`<font style="color:rgb(44, 44, 54);"> → 执行处理代码 → 程序继续执行后续代码。</font>
+
+**<font style="color:rgb(17, 24, 39);">注意 </font>**<font style="color:rgb(44, 44, 54);">：未匹配的异常会导致程序崩溃，需确保关键路径有兜底处理。</font>
+
+#### <font style="color:rgb(44, 44, 54);">示例代码：</font>
+```cpp
+#include <iostream>
+#include <stdexcept>
+using namespace std;
+
+// 自定义除零异常类
+class DivideByZeroException : public runtime_error {
+public:
+    DivideByZeroException() : runtime_error("Attempted to divide by zero") {}
+};
+
+// 计算商
+double quotient(int numerator, int denominator) {
+    if (denominator == 0) {
+        throw DivideByZeroException(); // 抛出异常
+    }
+    return static_cast<double>(numerator) / denominator;
+}
+
+int main() {
+    int a = 10, b = 0;
+    try {
+        double result = quotient(a, b); // 可能抛出异常
+        cout << "Result: " << result << endl;
+    } catch (const DivideByZeroException& e) {
+        cerr << "DivideByZeroException: " << e.what() << endl; // 捕获并处理
+    } catch (const exception& e) {
+        cerr << "Standard exception: " << e.what() << endl; // 兜底捕获
+    } catch (...) {
+        cerr << "Unknown exception occurred." << endl; // 捕获所有未匹配异常
+    }
+    return 0;
+}
+```
+
+### 处理标准库抛出的异常
+#### **核心目标**
+捕获并处理C++标准库抛出的异常（如 `bad_alloc`、`out_of_range` 等），避免程序因未处理异常而崩溃。
+
++ **关键操作**：使用 `try`、`catch` 和 `throw` 分离正常逻辑与错误处理。
+
+#### **示例：**`bad_alloc`
++ **场景**：使用 `new` 动态分配内存时，若内存不足，会抛出 `bad_alloc` 异常。
++ **传统问题**：未捕获异常会导致程序直接调用 `abort()`，无法释放资源。
++ **解决方案**：通过 `try-catch` 捕获异常，执行清理操作或优雅退出。
+
+##### **代码：捕获 **`bad_alloc`
+```cpp
+#include <iostream>
+#include <new> // for bad_alloc
+using namespace std;
+
+class Test {
+public:
+    Test() { cout << "Constructor called." << endl; }
+    ~Test() { cout << "Destructor ok." << endl; }
+};
+
+int main() {
+    Test t;
+    double* ptr[50];
+
+    try {
+        for (int i = 0; i < 50; i++) {
+            ptr[i] = new double[50000000]; // 可能抛出 bad_alloc
+            cout << "Allocated 50,000,000 doubles in ptr[" << i << "]" << endl;
+        }
+    } catch (bad_alloc& e) {
+        cerr << "Exception occurred: " << e.what() << endl;
+    }
+
+    cout << "Exception handled." << endl;
+    return 0;
+}
+```
+
+**输出示例**：
+
+```plain
+Constructor called.
+Allocated 50,000,000 doubles in ptr[0]
+Allocated 50,000,000 doubles in ptr[1]
+...
+Exception occurred: bad allocation
+Destructor ok.
+Exception handled.
+```
+
+#### **异常类型匹配规则**
++ **is-a 关系**：`catch` 块按类型匹配异常。若异常类型是 `catch` 声明类型的派生类，则匹配成功。
+
+```cpp
+catch (const std::exception& e) { /* 可捕获所有标准库异常 */ }
+```
+
++ **捕获所有异常**：使用 `catch (...)` 捕获未知异常。
+
+```cpp
+try {
+    // 可能抛出任何异常
+} catch (...) {
+    cerr << "Unknown exception caught!" << endl;
+}
+```
+
+#### **异常规范**
++ **异常说明（Exception Specification）**：指定函数可能抛出的异常类型。
+
+```cpp
+void func() throw(std::runtime_error); // 仅允许抛出 runtime_error
+void func() throw();                   // 不允许抛出任何异常
+```
+
++ **C++11 替代方案**：使用 `noexcept` 指定函数不抛出异常。
+
+```cpp
+void func() noexcept; // 等效于 throw()
+```
+
+
+
+### 栈展开
+```cpp
+#include <iostream>
+using namespace std;
+
+class obj{
+  int id;
+public:
+  obj(int n){
+    id=n;
+    cout<<"ctor"<<n<<endl;
+  }
+  ~obj(){
+    cout<<"dtor"<<id<<endl;
+  }
+};
+
+void f2(){
+  obj o(2);
+  double a=0;
+  try{
+    throw a;
+  }
+  catch(double e){
+    cout<<"OK2! "<<e<<endl;
+    throw;
+  }
+  cout<<"end2"<<endl;
+}
+
+void f1(){
+  obj o(1);
+  try{
+    f2();
+  }
+  catch(char e){
+    cout<<"OK1! "<<e<<endl;
+  }
+  cout<<"end1"<<endl;
+}
+int main(){
+  try{
+    obj o(0);
+    f1();
+  }
+  catch(double e){
+    cout<<"OK0!"<<e<<endl;
+  }
+  cout<<"end0"<<endl;
+  return 0;
+}
+```
+
+>    							假如删去24行throw;
+>
+> 输出：ctor0				   	   输出：ctor0
+>
+> ctor1						      ctor1			
+>
+> ctor2 					      ctor2
+>
+> OK2! 0					      OK2! 0
+>
+> dtor2					    	      end2
+>
+> dtor1					              dtor2
+>
+> dtor0					              end1
+>
+> OK0! 0					      dtor1
+>
+> end0						      dtor0
+>
+>            end0
+>
+
+**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">为什么</font>**`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">dtor2</font>**`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">在</font>**`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">OK0!</font>**`**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">之前？</font>**
+
++ <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">当</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">f2</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">中的</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">throw;</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">重新抛出异常时，程序会立即退出</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">f2</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">函数作用域</font>
++ <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">在退出</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">f2</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">时，其局部对象</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">o(2)</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">必须被析构 → 输出</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">dtor2</font>`
++ <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">只有完成当前作用域的清理后，异常才会继续向上传播到</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">main</font>`
+
+**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">技术要点总结</font>**
+
+1. **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">栈展开的触发时机</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：每次执行</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">throw</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">（包括重新抛出）都会立即触发当前作用域的析构</font>
+2. **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">析构顺序原则</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：后构造的对象先析构（LIFO/FILO 后出先进/先进后出）</font>
+3. **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">重新抛出的特殊性</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">throw;</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">语句会保留原始异常对象，但会触发当前函数作用域的清理</font>
+
+
+
+
+
+
+
 # 其他
 ## 生成随机数
 ```cpp
@@ -6403,113 +7980,9 @@ cout << scientific << setprecision(3) << largeNumber << endl;
 
 
 
-
-
-
-
-
-
-
-
----
-
-## **接口分离**
-源文件包含客户端，例子为WX2.cpp
-
-```cpp
-#include <iostream>
-#include <string>
-#include"Employee.h"  //调用头文件
-using namespace std;
-int main() {
-    Employee employee1("Bob", 34500);  //这里的Employee就相当于一种结构体
-
-    cout << "Employee 1: " << employee1.getName() <<endl;  //操作对象.成员函数（）
-    cout << "Yearly Salary: " << employee1.getSalary() << endl;
-    
-    cout << "Increasing employee salaries by 10%" << endl;
-    employee1.setSalary(employee1.getSalary()*1.1);
-
-    return 0;
-}
-```
-
-头文件包含接口，实现,
-
-接口Employee.h
-
-```cpp
-class Employee {
-private:  
-    std::string Name;  //避免污染不用using，记得要std::
-    int salary;
-public:
-    Employee(std::string, int);  //在接口的函数调用中，只用指明各个参数的类型，不用具体的参数名
-    void setName(const std::string );  //const在内部说明该参数值在函数内部不能被修改
-    std::string getName() const;  //const在外部说明函数返回的值是常量，不能被修改
-    void setSalary(int );
-    int getSalary() const;
-};  // class 大括号结尾是有‘；’的
-```
-
-
-
-实现employee.cpp
-
-```cpp
-#include<string>
-#include<iostream>
-#include"Employee.h"  //在实现中也要调用头文件
-//这里就不用再提示 class了，我们直接写函数，包括构造函数
-Employee::Employee(std::string name, int sal) {  //这是构造函数，作用是在创建类的对象时初始化对象 
-    Name = name;                                 //这里的函数都要有Employee::,是来说明这个函数Employee这个类里面
-    if (sal < 0)sal = 0;
-    salary = sal / 12;
-}
-
-void Employee::setName(const std::string name) {
-    Name = name;
-}
-
-std::string Employee::getName() const {
-    return Name;
-}
-
-void Employee::setSalary(int sal) {
-    if (sal < 0)sal = 0;
-    salary = sal / 12;
-}
-
-int Employee::getSalary() const {
-    return salary * 12;
-}
-```
-
----
-
----
-
----
-
----
-
----
-
----
-
----
-
 ## 
 
 
-
-
-## 
-
-
-
-
-## 
 
 
 ## 逗号表达式
