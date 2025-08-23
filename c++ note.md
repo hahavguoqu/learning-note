@@ -1,6 +1,6 @@
 #  STL容器算法  
 ## `array` 
-`array` 是 C++11 引入的一个模板类，提供了比 C 风格数组更多的功能。它的大小是固定的，并且在编译时就确定。
+`array` 是 C++11 引入的一个**模板类**，它的大小是固定的，并且在编译时就确定。
 
 ```cpp
 #include <array>
@@ -47,8 +47,8 @@ int main() {
 
 4. **支持**** STL ****算法**：vector 与许多标准算法（如sort）无缝兼容。
 
-### vector常用操作和函数:
-##### 1. 声明 vector
+### 常用操作和函数:
+##### 1. 声明
 ```cpp
 #include <vector>
 vector<int> vec;          // 创建一个存储 int 类型的空向量
@@ -78,21 +78,21 @@ int value = vec.at(0);    // 获取第一个元素（有边界检查，超出范
 int size = vec.size();  // 获取向量大小
 ```
 
-##### 5. 删除元素
-· pop_back()：删除vector 中最后一个元素。
+##### 5 插入
+· insert()：在向量的某个位置插入元素。
 
 ```cpp
-vec.pop_back();  // 删除最后一个元素
+vec.insert(vec.begin(), 10);  // 在向量开头插入 10
 ```
 
-##### 6. 插入和删除
-· insert()：在向量的某个位置插入元素。
+##### 6. 删除元素
+· pop_back()：删除vector 中最后一个元素。
 
 · erase()：删除指定位置的元素。
 
 ```cpp
-vec.insert(vec.begin(), 10);  // 在向量开头插入 10
-vec.erase(vec.begin());       // 删除向量的第一个元素
+vec.pop_back();            // 删除最后一个元素
+vec.erase(vec.begin());    // 删除向量的第一个元素
 ```
 
 ##### 7. 清空向量
@@ -129,8 +129,7 @@ for (int x : vec)
 ```cpp
 vector<vector<int>> mat(3, vector<int>(4, 0));  
 vector<vector<vector<int>>> cube(2, vector<vector<int>>(3, vector<int>(4, 0)));
-vector<vector<vector<int>>> cube;
-//三维的定义，可以发现多维就是迭代
+//三维的定义，可以发现多维就是迭代，这是模版类的使用方法
 ```
 
 2. **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">逐行动态添加</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">  
@@ -183,9 +182,6 @@ mat.resize(5); // 将行数改为5，新增的行默认是空vector
 + **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">调整某一行的大小</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：</font>
 
 ```cpp
-cpp
-
-
 mat[0].resize(5); // 将第一行的列数改为5
 ```
 
@@ -193,59 +189,6 @@ mat[0].resize(5); // 将第一行的列数改为5
 1. **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">不规则二维结构</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：各行长度可以不同，适用于类似邻接表的场景。</font>
 2. **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">深拷贝问题</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：直接赋值会复制所有元素，大二维结构需谨慎操作。</font>
 3. **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">函数传参</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：建议使用</font>`<font style="background-color:rgb(252, 252, 252);">const vector<vector<int>>&</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">传递以避免拷贝。</font>
-
-### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">示例代码</font>
-```cpp
-cpp
-
-
-#include <iostream>
-#include <vector>
-using namespace std;
-
-int main() {
-    // 初始化3行4列，初始值为5
-    vector<vector<int>> mat(3, vector<int>(4, 5));
-    mat[1][2] = 10; // 修改元素
-
-    // 遍历打印
-    for (const auto& row : mat) {
-        for (int num : row) {
-            cout << num << " ";
-        }
-        cout << endl;
-    }
-
-    // 添加一行（长度5）
-    mat.push_back({7, 8, 9, 10, 11});
-
-    cout << "After adding a row:" << endl;
-    for (size_t i = 0; i < mat.size(); ++i) {
-        for (size_t j = 0; j < mat[i].size(); ++j) {
-            cout << mat[i][j] << " ";
-        }
-        cout << endl;
-    }
-
-    return 0;
-}
-```
-
-### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">输出结果</font>
-```cpp
-5 5 5 5 
-    5 5 10 5 
-        5 5 5 5 
-            After adding a row:
-        5 5 5 5 
-            5 5 10 5 
-                5 5 5 5 
-                    7 8 9 10 11
-```
-
-
-
-
 
 
 
@@ -278,7 +221,6 @@ queue<int> q;
 ```cpp
 q.push(10);
 q.push(20);
-q.push(30);
 ```
 
 ### 4. 出队（pop）
@@ -308,36 +250,6 @@ if (q.empty()) std::cout << "队列为空" << std::endl;
 ```cpp
 std::cout << "队列大小: " << q.size() << std::endl;
 ```
-
-### 示例代码
-```cpp
-#include <iostream>
-#include <queue>
-int main() {
-queen<int> q;
-// 入队
-q.push(10);
-q.push(20);
-q.push(30);
-
-// 访问队首元素
-cout << "队首元素: " << q.front() << endl; // 输出 10
-
-// 出队
-q.pop();
-
-cout << "队首元素: " << q.front() << endl; // 输出 20
-
-// 队列大小
-cout << "队列大小: " << q.size() << endl; // 输出 2
-
-return 0;
-}
-```
-
-
-
-
 
 
 
@@ -566,7 +478,7 @@ int main() {
 
 **题目：**
 
-给定一个 $ 3\times 3 $ 的九宫格，每个格子内分别含有一个数字，每个格子里的数字互不相同。每步我们可以选择任意一个 $ 2\times 2 $ 的区域将其顺时针旋转，例如：
+给定一个 ![image](https://cdn.nlark.com/yuque/__latex/07437c61d66b86947272a3fb5bc3e16e.svg) 的九宫格，每个格子内分别含有一个数字，每个格子里的数字互不相同。每步我们可以选择任意一个 ![image](https://cdn.nlark.com/yuque/__latex/10aa54bbdcae60bea1c1e8bcc141bf37.svg) 的区域将其顺时针旋转，例如：
 
 例如
 
@@ -703,8 +615,7 @@ pop_back() 用于<font style="color:rgb(0,0,255);">删除</font>字符串或容�
 
 ```cpp
 string str = "Hello!";
-str.pop_back(); // 删除最后一个字符
-                // str = "Hello"
+str.pop_back(); // 删除最后一个字符 str = "Hello"
 ```
 
 ### 2. push_back()
@@ -755,7 +666,7 @@ int main() {
 }
 ```
 
-### 7.`begin()` 和` end()` 
+### `begin()` 和` end()` 
 begin(),end()用于获取容器中第一个元素的开始和容器中最后一个元素**之后**的**位置**，可以用于stl容器和传统数组。
 
 ```cpp
@@ -859,7 +770,7 @@ int main() {
 + 第三个参数是一个**函数**（或**可调用对象**），用来定义如何比较容器中的元素。这个函数决定了元素排序的顺序。
 
 ### 使用自定义比较函数
-`sort()` 默认按升序排序，但你可以提供一个自定义的比较函数来改变排序的规则，例如降序排序或根据特定的条件进行排序。
+`sort()` **默认按升序排序**，但可以提供一个自定义的比较函数来改变排序的规则。
 
 #### 1.使用自定义比较函数（降序排序）
 ```cpp
@@ -967,30 +878,25 @@ int main() {
 ### 排序与并查集的例题
 [https://www.luogu.com.cn/problem/P10577](https://www.luogu.com.cn/problem/P10577)
 
-**题目**
+**题目描述**
 
-在森林幽静的一隅，有一村落居住着 $ n $ 只兔子。
+在一条数轴上有n个点，点i的初始位置为![image](https://cdn.nlark.com/yuque/__latex/39c69fbad0041c1d5caa9acf313cb0e6.svg)。每个点会选择距离自己最近的另一个点作为目标，并开始向目标移动。
 
-某个月光皎洁的夜晚，这些兔子列成一队，准备开始一场集结跳跃活动。村落中的每只兔子都占据一个位置，对于第 $ i $ 只兔子，其位置为 $ p_i $。我们称位置较小的为左边，位置较大的为右边。
++ 如果最近的点有两个（即左边和右边距离相等），则选择左边的那个。
++ 每次移动只能向左或向右移动 1个单位。
++ 当两个点之间的距离为1，且它们是彼此的目标时，靠右的点会跳到左边点的位置，左边的点保持不动，它们就完成了“集结”。
++ 每个点会不断朝自己的目标移动，直到与目标完成集结后停止。
 
-按照兔子村落的习俗，每只兔子都会选择距离自己最近的兔子作为同伴，并向同伴所在的方向进行跳跃。如果一只兔子左边和右边的兔子距离它一样近，那么它会选择左边的兔子作为同伴。
-
-兔子的每次跳跃，只能向左或向右移动一个单位距离。也就是说，如果一只兔子当前位于 $ x $ 的位置，那么它下一次跳跃后会到达 $ x-1 $ 或者 $ x+1 $ 的位置。
-
-当两只相互靠近的兔子之间的距离为 $ 1 $ 时，左边的兔子会停在原地，而右边的兔子会跳到左边兔子的位置上，完成集结。
-
-兔子们会一直跳跃，直到与自己最初选择的同伴完成集结后停下。
-
-请问，当所有兔子都完成集结后，每只兔子都分别位于哪个位置上？
+请你输出所有点最终的位置。
 
 **输入格式**
 
-输入的第一行包含一个整数 $ n $，表示兔子的数量。  
-第二行包含 $ n $ 个整数 $ p_1,p_2,\cdots, p_n $，相邻整数之间使用一个空格分隔，表示每只兔子的初始位置。
+第一行一个整数 n，表示点的个数。  
+第二行n个整数![image](https://cdn.nlark.com/yuque/__latex/cdd5844ca2df38c7b8e68e5b609ecb13.svg)，表示每个点的初始位置。
 
 **输出格式**
 
-输出一行包含 n 个整数，表示每只兔子完成集结后的位置。
+一行n个整数，表示每个点完成集结后的最终位置。
 
 **代码：**
 
@@ -1137,8 +1043,6 @@ switch (day) {
 
 
 
-
-
 ## `atoi` 
 `atoi` 是一个标准库函数，需要引用 **#include <cstdlib>** ，用于将 **C 风格**的字符串（即以 `\0` 结尾的字符数组）转换为整数类型 `int`。
 
@@ -1198,174 +1102,6 @@ int main() {
 }
 ```
 
----
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 映射（map）
-### `**<font style="background-color:rgb(252, 252, 252);">map</font>**`
-#### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">1. 核心特性</font>**
-+ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">有序性</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：元素按</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">键（Key）</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">自动排序（默认升序，可自定义排序规则）。</font>
-+ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">唯一键</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：每个键在容器中唯一，不能重复。</font>
-+ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">高效操作</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：插入、删除和查找操作的时间复杂度为 </font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">O(log n)</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">。</font>
-+ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">底层结构</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：基于红黑树（自平衡二叉搜索树），保证动态操作的高效性。</font>
-
-#### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">2. 常用操作</font>**
-##### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">头文件与声明</font>**
-```cpp
-#include <map>
-using namespace std;
-
-// 声明一个键为 string，值为 int 的 map
-map<string, int> myMap;
-
-// 自定义排序规则（按键降序）
-map<string, int, greater<string>> myDescMap;
-```
-
-##### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">插入元素</font>**
-+ `**<font style="background-color:rgb(252, 252, 252);">insert()</font>**`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：返回一个 </font>`<font style="background-color:rgb(252, 252, 252);">pair<iterator, bool></font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">，指示插入是否成功。</font>
-+ `**<font style="background-color:rgb(252, 252, 252);">operator[]</font>**`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：若键不存在，插入默认值；若存在，直接修改值。</font>
-
-```cpp
-myMap.insert({"apple", 5});         // 插入键值对
-myMap.insert(make_pair("banana", 3));
-myMap["orange"] = 7;               // 使用 [] 插入或修改
-```
-
-##### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">查找元素</font>**
-+ `**<font style="background-color:rgb(252, 252, 252);">find(key)</font>**`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：返回指向键的迭代器，未找到则返回 </font>`<font style="background-color:rgb(252, 252, 252);">end()</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">。</font>
-+ `**<font style="background-color:rgb(252, 252, 252);">count(key)</font>**`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：返回键的数量（0 或 1）。</font>
-
-```cpp
-auto it = myMap.find("apple");
-if (it != myMap.end()) {
-    cout << "Found: " << it->second << endl; // 输出值
-}
-
-if (myMap.count("banana") > 0) {
-    cout << "Key exists!" << endl;
-}
-```
-
-##### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">删除元素</font>**
-+ `**<font style="background-color:rgb(252, 252, 252);">erase(key)</font>**`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：删除指定键的元素。</font>
-+ `**<font style="background-color:rgb(252, 252, 252);">erase(iterator)</font>**`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：通过迭代器删除。</font>
-
-```cpp
-myMap.erase("apple");            // 删除键为 "apple" 的元素
-auto it = myMap.find("banana");
-if (it != myMap.end()) {
-    myMap.erase(it);             // 通过迭代器删除
-}
-```
-
-##### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">遍历元素</font>**
-```cpp
-// 使用迭代器
-for (auto it = myMap.begin(); it != myMap.end(); ++it) {
-    cout << it->first << ": " << it->second << endl;
-}
-
-// 使用 C++11 范围 for 循环
-for (const auto& pair : myMap) {
-    cout << pair.first << ": " << pair.second << endl;
-}
-```
-
-#### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">3. 自定义键类型</font>**
-<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">若键是自定义类型（如类或结构体），需提供</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">比较规则</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：</font>
-
-+ <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">重载</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="background-color:rgb(252, 252, 252);"><</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">运算符。</font>
-+ <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">或在模板参数中指定自定义比较器。</font>
-
-```cpp
-struct Point {
-    int x, y;
-    // 重载 < 运算符
-    bool operator<(const Point& other) const {
-        return (x < other.x) || (x == other.x && y < other.y);
-    }
-};
-
-// 使用自定义比较器
-struct ComparePoint {
-bool operator()(const Point& a, const Point& b) const {
-    return a.x < b.x;
-}
-};
-map<Point, string, ComparePoint> pointMap;
-```
-
-#### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">4. 性能与适用场景</font>**
-+ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">适用场景</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：需要有序键、频繁查找/插入/删除且键唯一的场景。</font>
-+ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">对比</font>****<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>**`**<font style="background-color:rgb(252, 252, 252);">unordered_map</font>**`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：</font>
-    - `<font style="background-color:rgb(252, 252, 252);">map</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">有序，但性能略低（O(log n)）。</font>
-    - `<font style="background-color:rgb(252, 252, 252);">unordered_map</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">无序，但平均查找时间为 O(1)（基于哈希表）。</font>
-
-**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">5. 示例代码</font>**
-
-```cpp
-#include <iostream>
-#include <map>
-using namespace std;
-
-int main() {
-    map<string, int> fruits;
-
-    // 插入元素
-    fruits["apple"] = 5;
-    fruits.insert({"banana", 3});
-    fruits.emplace("orange", 7);  // 更高效的插入方式
-
-    // 修改值
-    fruits["apple"] = 10;
-
-    // 遍历
-    for (const auto& [key, value] : fruits) { // C++17 结构化绑定
-        cout << key << ": " << value << endl;
-    }
-
-    // 删除元素
-    fruits.erase("banana");
-
-    return 0;
-}
-```
-
-
-
-### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">2. </font>**`**<font style="background-color:rgb(252, 252, 252);">unordered_map</font>**`
-#### **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">基本特性</font>**
-+ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">无序性</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：键的顺序不确定（取决于哈希函数和桶分布）。</font>
-+ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">底层实现</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：哈希表（数组 + 链表/红黑树）。</font>
-+ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">时间复杂度</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：</font>
-    - <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">平均情况：插入、删除、查找为</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="background-color:rgb(252, 252, 252);">O(1)</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">。</font>
-    - <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">最坏情况：哈希冲突严重时退化为</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="background-color:rgb(252, 252, 252);">O(n)</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">。</font>
-+ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">内存占用</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：较低（但需预留桶空间）。</font>
-+ **<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">是否需要哈希函数</font>**<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">：需要键的哈希函数（默认支持基本类型，自定义类型需手动实现）。</font>
-
-#### 操作用法
-与map几乎一致。
-
-
-
-
-
-
-
 
 
 
@@ -1392,10 +1128,9 @@ int main() {
 
 + <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">网络中的节点连接状态判断</font>
 + <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">图的连通分量统计</font>
-+ <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">元素分组去重（如题目中的数组去重问题）</font>
 
 ### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">一、核心操作实现</font>
-#### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">1. 数据结构初始化</font>
+#### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">1. 初始化</font>
 <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">每个元素初始指向自己，表示自己是独立的集合。</font>
 
 ```cpp
@@ -1427,14 +1162,8 @@ void unionSet(int x, int y) {
 }
 ```
 
----
-
 ### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">二、优化方法</font>
-#### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">1. 路径压缩（Path Compression）</font>
-<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">在</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="background-color:rgb(252, 252, 252);">Find</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">过程中将树的路径扁平化，使得后续查询更快。  
-</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">https://i.imgur.com/5kU3lqC.gif</font>
-
-#### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">2. 按秩合并（Union by Rank）</font>
+#### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">1. 按秩合并（Union by Rank）</font>
 <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">在</font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font>`<font style="background-color:rgb(252, 252, 252);">Union</font>`<font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);"> </font><font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">时让小树合并到大树中，降低树的高度。</font>
 
 ```cpp
@@ -1462,7 +1191,6 @@ void unionSet(int x, int y) {
 ### <font style="color:rgba(0, 0, 0, 0.9);background-color:rgb(252, 252, 252);">三、时间复杂度</font>
 | **<font style="background-color:rgb(252, 252, 252);">操作</font>** | **<font style="background-color:rgb(252, 252, 252);">平均时间复杂度</font>** | **<font style="background-color:rgb(252, 252, 252);">最坏时间复杂度</font>** |
 | :---: | :---: | :---: |
-| <font style="background-color:rgb(252, 252, 252);">未优化</font> | <font style="background-color:rgb(252, 252, 252);">O(N)</font> | <font style="background-color:rgb(252, 252, 252);">O(N)</font> |
 | <font style="background-color:rgb(252, 252, 252);">路径压缩</font> | <font style="background-color:rgb(252, 252, 252);">O(α(N))</font> | <font style="background-color:rgb(252, 252, 252);">O(logN)</font> |
 | <font style="background-color:rgb(252, 252, 252);">路径压缩+按秩合并</font> | <font style="background-color:rgb(252, 252, 252);">O(α(N))</font> | <font style="background-color:rgb(252, 252, 252);">O(α(N))</font> |
 
@@ -1478,6 +1206,7 @@ void unionSet(int x, int y) {
 #include <unordered_map>
 using namespace std;
 
+// 这里parent的含义就是下一个可用位置
 unordered_map<int, int> parent;
 
 int find(int x) {
@@ -1542,7 +1271,7 @@ int main() {
 cout << "Size of int: " << sizeof(int) << " bytes" << endl;
 ```
 
-注：2^31~2e10,2^63~2e19
+注：2^31~2e10  ,2^63~2e19
 
 
 
@@ -2084,8 +1813,6 @@ int main() {
 }
 ```
 
-
-
 ### 5.`enum class` 
 C++11 引入的一个强类型枚举，相对于传统的 `enum` 提供了更强的类型安全和作用域控制`enum class` 可以避免名称冲突，并且不自动将枚举值转换为整数。
 
@@ -2248,7 +1975,7 @@ const double PI = 3.14159;
 
 
 ## **自动存储类别**和**静态存储类别**
-### 1. **自动存储类别（**`**auto**`**）**
+### 1. **自动存储类别（**`auto`**）**
 + **生命周期**：变量的生命周期从其定义的作用域开始，到作用域结束时自动销毁。
 + **存储位置**：通常存储在栈区。
 + **初始化**：每次进入作用域时，变量会被重新初始化。
@@ -2260,7 +1987,7 @@ void func() {
 }  // x 在函数结束时销毁
 ```
 
-### 2. **静态存储类别（**`**static**`**）**
+### 2. **静态存储类别（**`static`**）**
 + **生命周期**：变量的生命周期从程序启动到程序结束。即使在作用域之外，也会一直存在。
 + **存储位置**：通常存储在静态存储区。
 + **初始化**：变量**只**会在第一次调用时初始化**一次**，之后保持其值。数值变量默认初始化为**0**。
@@ -2276,7 +2003,13 @@ void func() {
 }
 ```
 
----
+
+
+
+
+
+
+
 
 ## 左值（Lvalue）和右值（Rvalue）
 **值类别**定义了表达式的结果是**可以被修改的**还是**临时的**。左值和右值描述了对象在内存中的**存在方式**和**生命周期**，并决定了它们如何与引用、赋值等操作交互。
@@ -2758,10 +2491,12 @@ cout << ***ptr3;// 输出10，***ptr3解引用三次，获取ptr指向的值
 
 `++a` 是前置递增，它先递增 `a` 的值，然后返回递增后的值（递增结束后，此时为**左值**），所以可以通过 `&` 运算符取 `a` 的地址。
 
----
+
+
+
 
 ## 通用指针
-### 1. `void`* 指针的定义
+### 1. `void`*指针的定义
 `void*` 是一种特殊的指针类型，可以指向任何类型的对象或数据，但是它不直接关联任何具体类型。因此，`void*` 被称为“通用指针”或“空指针”。
 
 ```cpp
@@ -2807,14 +2542,22 @@ void* ptr1 = &x;  // int* 隐式转换为 void*
 void* ptr2 = &y;  // float* 隐式转换为 void*
 ```
 
-+ **将 **`**void***`** 转换为具体类型的指针**：从 `void*` 转换回具体类型时，需要显式转换（使用 `static_cast` 或 `reinterpret_cast`）。因为 `void*` 不包含类型信息，编译器不知道它实际指向什么类型的数据。
++ **将**`void`** 转换为具体类型的指针**：从 `void*` 转换回具体类型时，需要显式转换（使用 `static_cast` 或 `reinterpret_cast`）。因为 `void*` 不包含类型信息，编译器不知道它实际指向什么类型的数据。
 
 ```cpp
 void* ptr = &x;
 int* int_ptr = static_cast<int*>(ptr);  // 将 void* 转换为 int*
 ```
 
----
+
+
+
+
+
+
+
+
+
 
 ## **常量指针（constant pointer）和 指针常量（pointer to constant）**
 ### 1. **常量指针 (Constant Pointer)**
@@ -2850,7 +2593,11 @@ ptr = &b;   // 可以修改 ptr 指向的地址
 const int* const ptr = &a;  // ptr 是一个常量指针，指向常量数据
 ```
 
----
+
+
+
+
+
 
 ## `.` 和 `->`
 `.` 和 `->`都用于访问对象的成员（属性或方法）。`.` 用于通过对象**直接访问**其成员；`->` 用于**通过指针**访问对象的成员。
@@ -2861,7 +2608,7 @@ const int* const ptr = &a;  // ptr 是一个常量指针，指向常量数据
 ```cpp
 class MyClass {
 public:
-int x;
+    int x;
 };
 
 int main() {
@@ -2875,7 +2622,7 @@ int main() {
 ```
 
 #### 2. `->`的使用：
-`arrow` 操作符（`->`）用于通过指针**访问对象的成员**。指针指向对象时，我们使用 `->` 来访问该对象的成员。
+`arrow` 操作符（`->`）用于通过指针访问对象的成员。**指针**指向对象时，我们使用 `->` 来访问该对象的成员。
 
 ```cpp
 class MyClass {
@@ -2903,6 +2650,8 @@ int main() {
 ---
 
 ## 
+
+
 # 函数与作用域
 ## **默认参数（Default Arguments）**
 默认参数是指在函数定义时为参数指定一个默认值，当调用该函数时，如果没有提供相应的参数值，则使用这个默认值。
@@ -3126,12 +2875,8 @@ int main() {
 
 
 
-
-
-
-
-## 函数重载
-函数重载（Function Overloading）是指在同一个作用域中，允许定义**多个同名**的函数，只要它们的**参数列表不同**（即参数的个数、类型或顺序不同）。函数的返回类型不影响重载，因为编译器是通过参数来区分不同的函数调用。
+## 函数重载（Function Overloading）
+函数重载是指在同一个作用域中，允许定义**多个同名**的函数，只要它们的**参数列表不同**（即参数的个数、类型或顺序不同）。函数的返回类型不影响重载，因为编译器是通过参数来区分不同的函数调用。
 
 ### 1. **函数重载的规则**
 + **函数名相同**：所有重载函数的名字必须相同。
@@ -3158,9 +2903,6 @@ int main() {
     print(42);         // 调用 print(int)
     print(3.14);       // 调用 print(double)
     print("Hello");    // 调用 print(string)
-    //输出：Printing integer: 42
-    //      Printing double: 3.14
-    //      Printing string: Hello
     return 0;
 }
 ```
@@ -3235,8 +2977,8 @@ void func(double a) {
 
 
 
-## 函数模版
-函数模板（Function Template） 允许编写一个函数的模板，而不需要指定具体的数据类型。函数模板可以用于创建一个函数，该函数可以处理多种数据类型，避免了为每个数据类型编写重复的代码。
+## 函数模版（Function Template） 
+函数模板允许编写一个函数的模板，而不需要指定具体的数据类型。函数模板可以用于创建一个函数，该函数可以处理多种数据类型，避免了为每个数据类型编写重复的代码。
 
 ### 1. **函数模板的定义**
 函数模板通过使用 `template` 关键字来定义，通常在函数名之前声明一个模板参数。
@@ -3289,14 +3031,14 @@ cout << add(10, 3.14) << endl;    // T1是int，T2是double
 ```
 
 ### 4. **显式指定模板参数**
-虽然编译器可以根据参数自动推导模板参数的类型，但你也可以显式**指定**模板参数（是指定，即告诉编译器类型是什么，而不是强制转化输出）。
+虽然编译器可以根据参数自动推导模板参数的类型，但你也可以**显式****指定**模板参数（是指定，即告诉编译器类型是什么，而不是强制转化输出）。
 
 ```cpp
 cout << add<int,double>(10, 2.5) << endl;   
 ```
 
 ### 5. **函数模板的特化（Template Specialization）**
-函数模板可以针对特定类型进行特化。这意味着可以为某些数据类型提供一个特定的实现，而不是使用通用模板。（如果差别比较大，那我们为什么不用单纯的函数重载）
+函数模板可以针对特定类型进行特化。这意味着可以为某些数据类型提供一个特定的实现，而不是使用通用模板。（如果差别比较大，那我们为什么不用单纯的函数重载呢？）
 
 ```cpp
 // 普通模板（用于处理任意类型的单个参数）
@@ -3332,7 +3074,7 @@ int main() {
 }
 ```
 
-### 7. **注意事项**
+### 6. **注意事项**
 + **函数模板和普通函数的重载**：如果函数模板与普通函数重载存在冲突，编译器可能会产生错误。例如，如果你有一个普通函数与模板函数名字相同，且参数类型不完全匹配，编译器可能无法决定调用哪个函数。
 
 ```cpp
@@ -3654,7 +3396,7 @@ int main() {
 
 # **类和对象**
 ## **接口分离**
-源文件包含客户端，例子为WX2.cpp
+源文件包含客户端，例子为main.cpp
 
 ```cpp
 #include <iostream>
@@ -3674,7 +3416,7 @@ int main() {
 }
 ```
 
-头文件包含接口，实现,
+头文件包含接口，实现
 
 接口Employee.h
 
@@ -6546,89 +6288,112 @@ int main() {
 ## 链表
 ```cpp
 #include <iostream>
+using namespace std;
 
-template<typename NODETYPE>
-class ListNode {
-public:
-    NODETYPE data;
-    ListNode<NODETYPE>* nextPtr;
-
-    ListNode(const NODETYPE& value) : data(value), nextPtr(nullptr) {}
+// 链表节点模板
+template<typename T>
+struct ListNode {
+    T data;
+    ListNode<T>* next;
+    ListNode(const T& val) : data(val), next(nullptr) {}
 };
 
-template<typename NODETYPE>
-class List {
+// 链表模板类
+template<typename T>
+class LinkedList {
 private:
-    ListNode<NODETYPE>* firstPtr; // 首节点指针
-    ListNode<NODETYPE>* lastPtr;  // 尾节点指针（用于优化插入）
-
-    // 创建新节点工具函数
-    ListNode<NODETYPE>* getNewNode(const NODETYPE& value) {
-        return new ListNode<NODETYPE>(value);
-    }
+    ListNode<T>* head;
+    ListNode<T>* tail;
 
 public:
     // 构造函数
-    List() : firstPtr(nullptr), lastPtr(nullptr) {}
-
-    // 析构函数：释放所有节点内存
-    ~List() {
-        if (!isEmpty()) {
-            std::cout << "Destroying nodes...\n";
-            ListNode<NODETYPE>* currentPtr = firstPtr;
-            while (currentPtr != nullptr) {
-                ListNode<NODETYPE>* tempPtr = currentPtr;
-                std::cout << tempPtr->data << '\n';
-                currentPtr = currentPtr->nextPtr;
-                delete tempPtr;
-            }
+    LinkedList() : head(nullptr), tail(nullptr) {}
+    
+    // 析构函数
+    ~LinkedList() {
+        ListNode<T>* current = head;
+        while (current) {
+            ListNode<T>* next = current->next;
+            delete current;
+            current = next;
         }
-        std::cout << "All nodes destroyed\n\n";
     }
-
-    // 判断链表是否为空
-    bool isEmpty() const {
-        return firstPtr == nullptr;
+    
+    // 尾部插入
+    void push_back(const T& value) {
+        ListNode<T>* newNode = new ListNode<T>(value);
+        if (!head) {
+            head = tail = newNode;
+        } else {
+            tail->next = newNode;
+            tail = newNode;
+        }
     }
-
-    // 打印所有节点数据
+    
+    // 打印链表
     void print() const {
-        if (isEmpty()) {
-            std::cout << "The list is empty\n\n";
-            return;
+        ListNode<T>* current = head;
+        while (current) {
+            cout << current->data << " ";
+            current = current->next;
         }
-
-        ListNode<NODETYPE>* currentPtr = firstPtr;
-        std::cout << "The list is: ";
-        while (currentPtr != nullptr) {
-            std::cout << currentPtr->data << ' ';
-            currentPtr = currentPtr->nextPtr;
-        }
-        std::cout << "\n\n";
+        cout << endl;
     }
-
-    // 头部插入节点
-    void insertAtFront(const NODETYPE& value) {
-        ListNode<NODETYPE>* newNode = getNewNode(value);
-        if (isEmpty()) {
-            firstPtr = lastPtr = newNode;
-        } else {
-            newNode->nextPtr = firstPtr;
-            firstPtr = newNode;
-        }
-    }
-
-    // 尾部插入节点（使用 lastPtr 优化）
-    void insertAtBack(const NODETYPE& value) {
-        ListNode<NODETYPE>* newNode = getNewNode(value);
-        if (isEmpty()) {
-            firstPtr = lastPtr = newNode;
-        } else {
-            lastPtr->nextPtr = newNode;
-            lastPtr = newNode;
-        }
-    }
+    
+    // 获取头节点（用于合并操作）
+    ListNode<T>* get_head() const { return head; }
 };
+
+// 合并两个有序链表（非成员函数）
+template<typename T>
+void merge_sorted_lists(const LinkedList<T>& l1, 
+                        const LinkedList<T>& l2, 
+                        LinkedList<T>& result) {
+    ListNode<T>* p1 = l1.get_head();
+    ListNode<T>* p2 = l2.get_head();
+    
+    while (p1 && p2) {
+        if (p1->data <= p2->data) {
+            result.push_back(p1->data);
+            p1 = p1->next;
+        } else {
+            result.push_back(p2->data);
+            p2 = p2->next;
+        }
+    }
+    
+    // 添加剩余元素
+    while (p1) {
+        result.push_back(p1->data);
+        p1 = p1->next;
+    }
+    while (p2) {
+        result.push_back(p2->data);
+        p2 = p2->next;
+    }
+}
+
+// 使用示例
+int main() {
+    LinkedList<int> list1, list2, merged;
+    
+    // 创建有序链表
+    list1.push_back(1);
+    list1.push_back(3);
+    list1.push_back(5);
+    
+    list2.push_back(2);
+    list2.push_back(4);
+    list2.push_back(6);
+    
+    // 合并链表
+    merge_sorted_lists(list1, list2, merged);
+    
+    cout << "Merged list: ";
+    merged.print();  // 输出: 1 2 3 4 5 6
+    
+    return 0;
+}
 ```
 
 
