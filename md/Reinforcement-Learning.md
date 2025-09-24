@@ -2,6 +2,8 @@
 
 Episodic Task（情节任务） -> Continuing Task（持续任务）
 
+How?Why?
+
 
 
 ## Bellman Equation:
@@ -62,7 +64,7 @@ The relationship between the first equation and the second equation reflects **t
 
 Therefore ,we have **the Bellman eqution**:
 $$
-\begin{aligned}v_{\pi}(s)&=\mathbb{E}[R_{t+1}|S_{t}=s]+\gamma\mathbb{E}[G_{t+1}|S_{t}=s],\\&=\underbrace{\sum_a\pi(a|s)\sum_rp(r|s,a)r}_\text{mean of future rewards}+\underbrace{\gamma\sum_a\pi(a|s)\sum_{s^{\prime}}p(s'|s,a)v_\pi(s'),}_{\text{mean of future rewards}}\\&=\sum_a\pi(a|s)\left[\sum_rp(r|s,a)r+\gamma\sum_{s^{\prime}}p(s^{\prime}|s,a)v_\pi(s^{\prime})\right],\quad\forall s\in\mathcal{S}.\end{aligned}
+\begin{aligned}v_{\pi}(s)&=\mathbb{E}[R_{t+1}|S_{t}=s]+\gamma\mathbb{E}[G_{t+1}|S_{t}=s],\\&=\underbrace{\sum_a\pi(a|s)\sum_rp(r|s,a)r}_\text{mean of future rewards}+\underbrace{\gamma\sum_a\pi(a|s)\sum_{s^{\prime}}p(s'|s,a)v_\pi(s'),}_{\text{mean of future rewards}}\\&=\sum_a\pi(a|s)\left[\sum_rp(r|s,a)r+\gamma\sum_{s^{\prime}}p(s^{\prime}|s,a)v_\pi(s^{\prime})\right],\quad\forall s\in\mathcal{S}.\end{aligned}\tag{1}
 $$
 Note that:
 
@@ -129,10 +131,70 @@ v_{\pi}(s_3) \\
 v_{\pi}(s_4)
 \end{bmatrix}
 $$
+
+
 ***Why** to solve state values $v_\pi(s)$?*
 Given a *policy*, finding out the corresponding state values is called **policy evaluation**! It is a fundamental problem in RL. It is the foundation to *find better policies*.
 
 
 
+***How** to solve state values?*
+
+The closed-form solution(封闭形式解) is:
+$$
+v_{\pi}=(I-\gamma P_{\pi})^{-1}r_{\pi}
+$$
+The **iterative solution**(迭代) is:
+$$
+v_{k+1}=r_{\pi}+\gamma P_{\pi}v_{k}
+$$
+It follows directly from the above matrix–vector form.
+
+This algorithm leads to a sequence$\{v_{0},v_{1},v_{2},\ldots\}$.We can show that:
+$$
+v_k\to v_\pi=(I-\gamma P_\pi)^{-1}r_\pi,\quad k\to\infty 
+$$
+It is sufficient(足够的) here to show the *convergence（收敛）* of the sequence.
 
 
+
+#### Action Value:
+
+**Definition**:The average return the agent can get *starting from a state* and *takeing an action*.
+$$
+q_{\pi}(s,a)=\mathbb{E}[G_{t}|S_{t}=s,A_{t}=a]
+$$
+It follows from the properties of conditional expectation that
+$$
+\underbrace{\mathbb{E}[G_{t}|S_{t}=s]}_{v_{\pi}(s)}=\sum_{a}\underbrace{\mathbb{E}[G_{t}|S_{t}=s,A_{t}=a]}_{q_{\pi}(s,a)}\pi(a|s)
+$$
+Hence,
+$$
+v_\pi(s)=\sum_a\pi(a|s)q_\pi(s,a) \tag{2}
+$$
+Contrast to the states value:The average return the agent can get *starting from a state*.
+
+Note that: the average return here refers to the expected long-term reward that can be continually accrued in the future.
+
+
+
+***Why** do we care action value?*
+
+Because we want to know which action is *better*.
+
+
+$$
+\underbrace{\mathbb{E}[G_{t}|S_{t}=s]}_{v_{\pi}(s)}=\sum_{a}\underbrace{\mathbb{E}[G_{t}|S_{t}=s,A_{t}=a]}_{q_{\pi}(s,a)}\:\pi(a|s)
+$$
+
+
+Recall that the state value is given by function(1):
+$$
+v_{\pi}(s)=\sum_{a}\pi(a|s)\Big[\underbrace{\sum_{r}p(r|s,a)r+\gamma\sum_{s^{\prime}}p(s^{\prime}|s,a)v_{\pi}(s^{\prime})}_{q_{\pi}(s,a)}\Big]
+$$
+
+
+According to (2),we can have **the action-value function** as:
+$$
+q_{\pi}(s,a)=\sum_{r}p(r|s,a)r+\gamma\sum_{s^{\prime}}p(s^{\prime}|s,a)v_{\pi}(s^{\prime})
+$$
