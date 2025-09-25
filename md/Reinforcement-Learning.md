@@ -20,7 +20,7 @@ $$
 
 
 
-#### State Value（状态价值）:
+#### State Value:
 
 从状态s出发，按照策略$\pi$行动，未来能期望得到多少奖励。
 
@@ -197,4 +197,22 @@ $$
 According to (2),we can have **the action-value function** as:
 $$
 q_{\pi}(s,a)=\sum_{r}p(r|s,a)r+\gamma\sum_{s^{\prime}}p(s^{\prime}|s,a)v_{\pi}(s^{\prime})
+$$
+
+
+#### Bellman Optimality Equation(BOE):
+
+**Optimal policy:**
+
+A policy $\pi^{*}$ is optimal if $v_{\pi^*}(s)\geq v_\pi(s)$ for all *s* and for any other policy $\pi$.
+
+
+
+**Bellman optimality equation (elementwise form):**
+$$
+\begin{aligned}v(s)&=\max_\pi\sum_a\pi(a|s)\left(\sum_rp(r|s,a)r+\gamma\sum_{s'}p(s'|s,a)v(s')\right),\quad\forall s\in\mathcal{S}\\&=\max_\pi\sum_a\pi(a|s)q(s,a)\quad s\in\mathcal{S}\end{aligned}
+$$
+**Bellman optimality equation (matrix-vector form):**
+$$
+v=\max_\pi(r_\pi+\gamma P_\pi v)
 $$
