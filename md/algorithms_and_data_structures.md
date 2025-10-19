@@ -107,6 +107,8 @@ int main() {
 
 
 
+
+
 ### 动态规划
 
 #### 状压DP
@@ -477,6 +479,24 @@ int main() {
 
 ## 数据结构
 
+#### 栈
+
+```c++
+int st[N];
+
+
+// 压栈 ：
+st[++*st] = var1;
+// 取栈顶 ：
+int u = st[*st];
+// 弹栈 ：注意越界问题, *st == 0 时不能继续弹出
+if (*st) --*st;
+// 清空栈
+*st = 0;
+```
+
+
+
 #### 链表
 
 ```c++
@@ -534,6 +554,135 @@ public:
         }
         cout << endl;
     }
+};
+```
+
+
+
+#### 哈希表
+
+##### 拉链法（开散列法）
+
+每个存储位置开一个链表，若多个键值索引引向同一个地方，都放入同一个链表即可。
+
+**代码实现**
+
+```c++
+constexpr int SIZE = 1e6;  //所有节点数量
+constexpr int M = 1e6;  //哈希表大小
+
+struct HashTable {
+  struct Node {
+    int next, value, key;
+  } data[SIZE];
+
+  int head[M], size;  //哈希桶 i 对应链表的第一个节点
+
+  int f(int key) { 
+      return (key % M + M) % M; //防止出现负数结果，% 运算无法将负数转为正数
+  } 
+
+  int get(int key) {
+    for (int p = head[f(key)]; p; p = data[p].next)  //p为尾节点即结束
+      if (data[p].key == key) return data[p].value;
+    return -1;
+  }
+
+  int modify(int key, int value) {
+    for (int p = head[f(key)]; p; p = data[p].next)
+      if (data[p].key == key) return data[p].value = value;
+  }
+
+  int add(int key, int value) {
+    if (get(key) != -1) return -1;  //防止重复插入，即key相同
+    data[++size] = Node{head[f(key)], value, key};
+    head[f(key)] = size;
+    return value;
+  }
+};
+```
+
+**模板封装**
+
+```c++
+constexpr int MAX_NODES = 1e6;  // 最大节点数量（存储 key-value 对）
+constexpr int HASH_SIZE = 1e6;  // 哈希表桶数量
+
+struct HashMap {
+  struct Node {
+    long long key;  // 键
+    int value;      // 值
+    int next;       // 指向下一个节点的索引
+  };
+
+  Node nodes[MAX_NODES << 1];  // 所有节点的数组
+  int head[HASH_SIZE];         // 每个桶的链表头索引
+  int node_count;              // 当前节点数量（相当于 next_index）
+
+  // 构造函数：初始化
+  HashMap() {
+    node_count = 0;
+    memset(head, 0, sizeof(head));
+  }
+    
+  // 哈希函数
+  int hash(long long key) const {
+    return (key % HASH_SIZE + HASH_SIZE) % HASH_SIZE;
+  }
+
+  // 查找或创建节点，并返回 value 的引用
+  int& operator[](long long key) {
+    int bucket = hash(key);  // 对 key 取模确定桶号
+    for (int i = head[bucket]; i; i = nodes[i].next) {
+      if (nodes[i].key == key)
+        return nodes[i].value;  // 找到已有 key
+    }
+
+    // 未找到 -> 插入新节点
+    ++node_count;
+    nodes[node_count] = Node{key, -1, head[bucket]};
+    head[bucket] = node_count;
+    return nodes[node_count].value;
+  }
+};
+
+```
+
+
+
+##### 闭散列法
+
+闭散列方法把所有记录直接存储在散列表中，如果发生冲突则根据某种方式继续进行探查。
+
+比如线性探查法：如果在 `d` 处发生冲突，就依次检查 `d + 1`，`d + 2`……
+
+**代码实现**
+
+```c++
+constexpr int N = 1e7;  // 最大可以存储的元素数量
+
+class Hash {
+ private:
+  int keys[N];
+  int values[N];
+
+ public:
+  Hash() { 
+      memset(values, 0, sizeof(values)); 
+  }
+
+  int& operator[](int n) {
+    // 返回一个指向对应 Hash[Key] 的引用
+    // 修改成不为 0 的值 0 时候视为空
+    int idx = (n % N + N) % N;  //取哈希下标
+    int cnt = 1;
+    while (keys[idx] != n && values[idx] != 0) {
+      idx = (idx + cnt * cnt) % N; //二次探测，并非线性聚集
+      cnt += 1;
+    }
+    keys[idx] = n;
+    return values[idx];
+  }
 };
 ```
 
@@ -825,6 +974,146 @@ vector<int> KMP(string text, string pattern) {
 KMP主循环：𝑂(n)![O(n + m)](data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7) 
 
 
+
+#### 后缀表达式
+
+中缀表达式 --> 后缀表达式
+
+例如：$（3+4）*5-2/（1+2*3）\ -->\ 3\ 4\ + 5\ *\ 2\ 1\ 2 \ 3\ * \ +\ / \ -  $
+
+**规则：**
+
+需要两个数据结构：
+
+1. 一个**堆栈（Stack）**`operator_stack`，用于临时存储运算符和左括号 `(`。
+2. 一个**结果列表或字符串（Result）** `postfix_expression`，用于存储最终的后缀表达式。
+
+从左到右遍历中缀表达式的每一个字符（或标记）：
+
+**1. 遇到操作数（Operand）：**
+
+无论是数字（如 `5`, `12`）还是变量（如 `a`, `x`）。立即将其追加到 `postfix_expression`。
+
+**2. 遇到左括号 `(`：**
+
+立即将其压入 `operator_stack`。
+
+**3. 遇到右括号 `)`：**
+
+这是一个“清算”信号。不断地从 `operator_stack` 栈顶弹出元素，并将其追加到 `postfix_expression`，直到遇到左括号 `(` 为止。最后，将这个左括号 `(` 从 `operator_stack` 中弹出并丢弃。
+
+**4. 遇到运算符（Operator）：**
+
+例如 `+`, `-`, `*`, `/`。需要比较**当前运算符**与 `operator_stack` **栈顶运算符**的**优先级**。
+
+**当** `operator_stack` 不为空，**且** 栈顶元素不是 `(`，**且** **当前运算符的优先级** $\le$ **栈顶运算符的优先级** 时：反复从 `operator_stack` 栈顶弹出运算符，并将其追加到 `postfix_expression`。**直到** 上述条件不满足（栈空了、遇到 `(`、或当前运算符优先级更高）时，才将**当前运算符**压入 `operator_stack`。
+
+**5. 遍历结束：**
+
+当中缀表达式的所有字符都处理完毕后，`operator_stack` 中可能还剩余一些运算符。这样就将 `operator_stack` 中剩余的所有元素依次弹出，并追加到 `postfix_expression`。
+
+```c++
+#include <iostream>
+#include <stack>
+#include <string>
+#include <cctype> // 用于 isalnum()
+
+// 辅助函数：获取运算符的优先级
+int getPrecedence(char op) {
+    if (op == '+' || op == '-') {
+        return 1;
+    }
+    if (op == '*' || op == '/') {
+        return 2;
+    }
+    // '(', ')', 和其他字符
+    return 0; 
+}
+
+// 核心函数：中缀转后缀
+std::string infixToPostfix(const std::string& infix) {
+    std::stack<char> operator_stack;
+    std::string postfix_expression = "";
+
+    for (char c : infix) {
+        // 0. 忽略空格
+        if (isspace(c)) {
+            continue;
+        }
+
+        // 1. 遇到操作数（字母或数字）
+        if (isalnum(c)) {
+            postfix_expression += c;
+            postfix_expression += ' '; // 添加空格以分隔操作数
+        }
+        // 2. 遇到左括号 '('
+        else if (c == '(') {
+            operator_stack.push(c);
+        }
+        // 3. 遇到右括号 ')'
+        else if (c == ')') {
+            // 不断弹出栈顶元素，直到遇到 '('
+            while (!operator_stack.empty() && operator_stack.top() != '(') {
+                postfix_expression += operator_stack.top();
+                postfix_expression += ' ';
+                operator_stack.pop();
+            }
+            // 弹出 '('
+            if (!operator_stack.empty()) {
+                operator_stack.pop();
+            }
+        }
+        // 4. 遇到运算符
+        else {
+            // 当栈不空、栈顶不是'('、且当前操作符优先级 <= 栈顶操作符优先级
+            while (!operator_stack.empty() && 
+                   operator_stack.top() != '(' && 
+                   getPrecedence(c) <= getPrecedence(operator_stack.top())) 
+            {
+                postfix_expression += operator_stack.top();
+                postfix_expression += ' ';
+                operator_stack.pop();
+            }
+            // 处理完后，将当前运算符入栈
+            operator_stack.push(c);
+        }
+    }
+
+    // 5. 遍历结束，清空栈中剩余的运算符
+    while (!operator_stack.empty()) {
+        postfix_expression += operator_stack.top();
+        postfix_expression += ' ';
+        operator_stack.pop();
+    }
+
+    return postfix_expression;
+}
+
+int main() {
+    // 示例1：简单优先级
+    std::string infix1 = "a + b * c - d";
+    std::cout << "中缀表达式: " << infix1 << std::endl;
+    std::cout << "后缀表达式: " << infixToPostfix(infix1) << std::endl;
+    // 预期输出: a b c * + d - 
+
+    std::cout << "---------------------------------" << std::endl;
+
+    // 示例2：带括号
+    std::string infix2 = "(a + b) * c";
+    std::cout << "中缀表达式: " << infix2 << std::endl;
+    std::cout << "后缀表达式: " << infixToPostfix(infix2) << std::endl;
+    // 预期输出: a b + c * 
+    std::cout << "---------------------------------" << std::endl;
+
+    // 示例3：复杂括号和优先级
+    std::string infix3 = "a + (b * c - (d / e + f) * g) * h";
+    std::cout << "中缀表达式: " << infix3 << std::endl;
+    std::cout << "后缀表达式: " << infixToPostfix(infix3) << std::endl;
+    // 预期输出: a b c * d e / f + g * - h * + 
+
+    return 0;
+}
+```
 
 
 
