@@ -481,18 +481,60 @@ int main() {
 
 #### 栈
 
+**注意点**就是时刻要判断是否为**空**或者**溢出**。
+
 ```c++
-int st[N];
+#define MAX_SIZE 100
 
+class Stack {
+private:
+    int arr[MAX_SIZE]; // 使用固定大小的数组存储数据
+    int top;           // 栈顶元素的索引
 
-// 压栈 ：
-st[++*st] = var1;
-// 取栈顶 ：
-int u = st[*st];
-// 弹栈 ：注意越界问题, *st == 0 时不能继续弹出
-if (*st) --*st;
-// 清空栈
-*st = 0;
+public:
+    // 构造函数：初始化栈
+    Stack() {
+        top = -1; // -1 表示栈为空
+    }
+
+    bool isFull() {
+        return top == MAX_SIZE - 1;
+    }
+
+    bool isEmpty() {
+        return top == -1;
+    }
+
+    void push(int x) {
+        if (isFull()) {
+            std::cout << "Error: Stack Overflow (栈溢出)" << std::endl;
+            return;
+        }
+        // 1. 增加 top 索引
+        // 2. 将元素存入 top 指向的位置
+        arr[++top] = x;
+        std::cout << x << " pushed into stack" << std::endl;
+    }
+
+    int pop() {
+        if (isEmpty()) {
+            std::cout << "Error: Stack Underflow (栈下溢)" << std::endl;
+            return INT_MIN; // 返回一个哨兵值表示错误
+        }
+        // 1. 获取栈顶元素的值
+        // 2. 减少 top 索引
+        int x = arr[top--];
+        return x;
+    }
+
+    int peek() {
+        if (isEmpty()) {
+            std::cout << "Error: Stack is empty (栈为空)" << std::endl;
+            return INT_MIN; // 返回一个哨兵值表示错误
+        }
+        return arr[top];
+    }
+};
 ```
 
 
@@ -553,6 +595,39 @@ public:
             current = current->next;
         }
         cout << endl;
+    }
+    
+    void reverse() {
+        // 0. 如果链表为空或只有一个节点，无需反转
+        if (head == nullptr || head->next == nullptr) {
+            return;
+        }
+        
+        // 1. 初始化三个指针
+        // prev (前一个节点), current (当前节点), nextTemp (临时保存下一个节点)
+        ListNode<T>* prev = nullptr;
+        ListNode<T>* current = head;
+        ListNode<T>* nextTemp = nullptr;
+        
+        // 2. 更新 tail 指针
+        // 在反转开始前，旧的 head 将成为反转后的 new tail
+        tail = head;
+        
+        // 3. 循环遍历并反转
+        while (current != nullptr) {
+            // 临时存储下一个节点
+            nextTemp = current->next;
+            
+            // 反转当前节点的指针，指向前一个节点
+            current->next = prev;
+            
+            // 移动 prev 和 current 指针，为下一次迭代做准备
+            prev = current;
+            current = nextTemp;
+        }
+        
+        // 循环结束后, current 变为 nullptr, 而 prev 指向了新的头节点
+        head = prev;
     }
 };
 ```
@@ -847,6 +922,275 @@ int main() {
 查询[1,2]过 [3,3]被完全包含，更新 [4,5]被完全覆盖，更新 [6,6]过
 */
 ```
+
+
+
+#### 堆
+
+​	堆是一棵树，其每个节点都有一个键值，且每个节点的键值**都大于等于/小于等于**其父亲的键值。
+
+​	每个节点的键值都大于等于其父亲键值的堆叫做小根堆，否则叫做大根堆（就是根是“最大”还是“最小”）。STL 中的 priority_queue 其实就是一个大根堆。
+
+​	（小根）堆主要支持的操作有：插入一个数、查询最小值、删除最小值、合并两个堆、减小一个元素的值。一些功能强大的堆（可并堆）还能（高效地）支持 merge 等操作。一些功能更强大的堆还支持可持久化，也就是对任意历史版本进行查询或者操作，产生新的版本。
+
+| 操作                            | 配对堆                                                       | 二叉堆      | 左偏树      | 二项堆      | 斐波那契堆  |
+| :------------------------------ | :----------------------------------------------------------- | :---------- | :---------- | :---------- | :---------- |
+| 插入 (insert)                   | $O(1)$                                                       | $O(\log n)$ | $O(\log n)$ | $O(\log n)$ | $O(1)$      |
+| 查询最小值 (find-min)           | $O(1)$                                                       | $O(1)$      | $O(1)$      | $O(1)$      | $O(1)$      |
+| 删除最小值 (delete-min)         | $O(\log n)$                                                  | $O(\log n)$ | $O(\log n)$ | $O(\log n)$ | $O(\log n)$ |
+| 合并 (merge)                    | $O(1)$                                                       | $O(n)$      | $O(\log n)$ | $O(\log n)$ | $O(1)$      |
+| 减小一个元素的值 (decrease-key) | $o(\log n)$ (下界 $\Omega(\log \log n)$, 上界 $O(2^{2\sqrt{\log \log n}})$) | $O(\log n)$ | $O(\log n)$ | $O(\log n)$ | $O(1)$      |
+| 是否支持可持久化                | ×                                                            | ✓           | ✓           | ✓           | ×           |
+
+
+
+##### 二叉堆
+
+​	是完全二叉树（并非满二叉树），以下都以**大根堆**为例。
+
+**插入操作**
+
+​	在最下层最右边的叶子之后插入（如果最下层已满就再下一层插入）。若插入之后不满足堆性质，就**向上调整**：如果这个结点的权值大于它父亲的权值，就**交换**，重复此过程直到不满足或者到根。时间复杂度$O(logn)$。
+
+**改变节点权值**
+
+​	判断时需要**“上浮”**还是**“下沉”**操作，然后不断地与父节点或者子节点做交换操作，直至到边缘或者不能再交换。时间复杂度即路径长度即树的高度$O(logn)$。
+
+**删除操作**
+
+​	即指删除堆中的根节点。采取**向下调整**：即找到节点最大的儿子，并**交换**，直到到底层。时间复杂度$O(logn)$。
+
+​	如果删除的不是根节点，那我们找到这个节点，再与**最后一个节点交换**，再删除最后一个节点（此时这个节点即为需要删除的节点，完成了删除操作），再对原来位置的节点进行**“上浮”**或者**“下沉”**的操作（这里其实就是对交换后的节点采取“**改变节点权值**”的操作）。时间复杂度仍为$O(logn)$（找节点的过程可能为$O(n)$）。
+
+**建堆**
+
+​	直接一个一个插入调整时间复杂度在$O(nlogn)$​，我们采取**“向下调整”**的策略：
+
+- 找到**第一个非叶子节点**，即在一个使用数组（0 to n-1 索引）表示的完全二叉树中，最后一个非叶子节点的索引是 $\lfloor n/2 \rfloor - 1$。
+- 从索引 `i = (n/2) - 1` 开始到 `i = 0`  ，对以 `i` 为根的小子树操作确保以 `i` 为根的这个小“子堆”(注意这里可能需要多次递归交换)满足大根堆的性质。
+- 向前迭代 `i`（`i--`），对下一个非叶子节点（`i-1`）执行相同的操作，直到 `i = 0`（即根节点）也完成了“下沉”操作。
+
+​	时间复杂度：$O(n)$，之所以时间复杂度很低，是因为其实堆的性质很弱。
+
+**代码：**
+
+```c++
+// 这里还是以大根堆为例
+class MaxHeap {
+private:
+    std::vector<int> heap_array;
+
+    // 获取父节点索引
+    int parent(int i) { return (i - 1) / 2; }
+    // 获取左子节点索引
+    int left(int i) { return 2 * i + 1; }
+    // 获取右子节点索引
+    int right(int i) { return 2 * i + 2; }
+
+    // 向上调整 (上浮/Bubble-up) 操作。用于插入和增加权值。
+    void siftUp(int i) {
+        // 当 i > 0 (不是根节点) 且 i 的值大于父节点的值时，持续交换
+        while (i > 0 && heap_array[i] > heap_array[parent(i)]) {
+            std::swap(heap_array[i], heap_array[parent(i)]);
+            i = parent(i); // 移动到父节点位置，继续向上检查
+        }
+    }
+
+    // 向下调整 (下沉/Sift-down) 操作。用于删除根节点、建堆和减少权值。
+    void siftDown(int i) {
+        int largest = i,n = heap_array.size();
+        int l = left(i),r = right(i);
+
+        // 找到 i, 左子, 右子中最大的那个
+        if (l < n && heap_array[l] > heap_array[largest]) {
+            largest = l;
+        }
+        if (r < n && heap_array[r] > heap_array[largest]) {
+            largest = r;
+        }
+
+        // 如果 i 不是最大的，则与最大的子节点交换，并递归下沉
+        if (largest != i) {
+            std::swap(heap_array[i], heap_array[largest]);
+            siftDown(largest); // 递归向下调整
+        }
+    }
+
+public:
+    // --- 1. 插入操作 (O(log n)) ---
+    void insert(int value) {
+        // 1. 在最下层最右边的叶子之后插入 (即 push_back)
+        heap_array.push_back(value);
+        int i = heap_array.size() - 1;
+
+        // 2. 向上调整以维持堆性质
+        siftUp(i);
+    }
+
+    // --- 2. 改变节点权值操作 (O(log n)) ---
+    void changeKey(int i, int new_value) {
+        if (i < 0 || i >= heap_array.size()) {
+            throw std::out_of_range("Index out of bounds.");
+        }
+
+        int old_value = heap_array[i];
+        heap_array[i] = new_value;
+
+        // 判断需要“上浮”还是“下沉”
+        if (new_value > old_value) {
+            // 权值增加，可能违反父节点属性，需要上浮
+            siftUp(i);
+        } else if (new_value < old_value) {
+            // 权值减少，可能违反子节点属性，需要下沉
+            siftDown(i);
+        }
+        // 如果 new_value == old_value, 不做任何操作
+    }
+
+    // --- 3. 删除操作 (O(log n) 或 O(n) 取决于查找) ---
+
+    // 3.1 删除根节点 (delete-max) (O(log n))
+    int deleteMax() {
+        if (heap_array.empty()) {
+            throw std::out_of_range("Heap is empty.");
+        }
+        if (heap_array.size() == 1) {
+            int max_val = heap_array[0];
+            heap_array.pop_back();
+            return max_val;
+        }
+
+        // 1. 根节点与最后一个元素交换
+        int max_val = heap_array[0];
+        heap_array[0] = heap_array.back();
+        heap_array.pop_back();
+
+        // 2. 对新的根节点向下调整
+        siftDown(0);
+        return max_val;
+    }
+
+    // 3.2 删除任意节点 i (O(log n) 如果已知索引 i)
+    void deleteNode(int i) {
+        if (i < 0 || i >= heap_array.size()) {
+            throw std::out_of_range("Index out of bounds.");
+        }
+
+        // 1. 将该节点的值改为一个非常大的值 (确保它会上浮到根)
+        // 也可以直接和最后一个节点交换，然后使用 changeKey()，这里用更直接的方法：
+        
+        // 1. 和最后一个节点交换，并删除
+        std::swap(heap_array[i], heap_array.back());
+        heap_array.pop_back();
+
+        // 如果被交换到 i 位置的元素 (原来的最后一个元素) 仍在堆中
+        if (i < heap_array.size()) {
+            // 2. 对 i 位置的元素进行调整 (需要判断上浮还是下沉)
+            // 这里我们无法判断新值与旧值的关系，因此需要同时尝试上浮和下沉（其中一个会失败或立刻停止）
+            // 更简便的方法是直接调用 changeKey(i, heap_array[i])，但我们手写逻辑：
+            
+            // 因为不知道是上浮还是下沉，我们先尝试下沉（如果下沉不成功，说明堆可能被破坏）
+            siftDown(i);
+            
+            // 如果下沉操作后该元素仍不满足堆属性（可能它需要上浮），我们再尝试上浮
+            // 例如：如果被交换上来的值是最小的，它会一直下沉到底。
+            // 但如果被交换上来的值大于父节点，它需要上浮。
+            siftUp(i); 
+            // 注意：siftDown和siftUp只能发生一个，另一个操作会在第一步就停止。
+        }
+    }
+
+
+    // --- 4. O(n) 建堆操作 (Heapify) ---
+    void buildHeap(const std::vector<int>& data) {
+        heap_array = data; // 复制数据
+        int n = heap_array.size();
+
+        // 从最后一个非叶子节点开始 (即 (n/2) - 1)，自下而上进行下沉
+        // @complexity O(n)
+        for (int i = (n / 2) - 1; i >= 0; i--) {
+            siftDown(i);
+        }
+    }
+
+    // --- 打印/辅助函数 ---
+    void printHeap() const {
+        std::cout << "Heap Array: [";
+        for (size_t i = 0; i < heap_array.size(); ++i) {
+            std::cout << heap_array[i] << (i == heap_array.size() - 1 ? "" : ", ");
+        }
+        std::cout << "]" << std::endl;
+    }
+};
+
+int main() {
+    MaxHeap heap;
+    std::cout << "--- 4. 建堆操作 (O(n)) ---" << std::endl;
+    std::vector<int> initial_data = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    heap.buildHeap(initial_data);
+    std::cout << "After O(n) buildHeap: ";
+    heap.printHeap(); // 预期: [10, 9, 7, 8, 5, 6, 3, 1, 4, 2] (或等价的堆)
+
+    std::cout << "\n--- 1. 插入操作 (O(log n)) ---" << std::endl;
+    heap.insert(15);
+    std::cout << "After insert(15): ";
+    heap.printHeap(); // 15 会上浮到根
+
+    std::cout << "\n--- 2. 改变节点权值 (O(log n)) ---" << std::endl;
+    // 假设索引 7 是值 1
+    // 将索引 7 (值 1) 变为 20 (增加权值，触发上浮)
+    // 找到 1 的索引 (在我们的例子中，假设是 7)
+    int index_of_one = 7; 
+    heap.changeKey(index_of_one, 20); 
+    std::cout << "After changeKey(idx=7, val=20): ";
+    heap.printHeap(); // 20 会再次上浮到根
+
+    // 假设索引 0 (值 20) 变为 0 (减少权值，触发下沉)
+    heap.changeKey(0, 0); 
+    std::cout << "After changeKey(idx=0, val=0): ";
+    heap.printHeap(); // 0 会下沉
+
+    std::cout << "\n--- 3. 删除根节点 (O(log n)) ---" << std::endl;
+    int max_val = heap.deleteMax();
+    std::cout << "Deleted Max Value: " << max_val << std::endl;
+    std::cout << "After deleteMax: ";
+    heap.printHeap();
+
+    std::cout << "\n--- 3. 删除任意节点 (O(log n) 假设已知索引) ---" << std::endl;
+    // 假设我们要删除索引 3 的节点
+    int index_to_delete = 3; 
+    std::cout << "Deleting node at index " << index_to_delete << std::endl;
+    heap.deleteNode(index_to_delete);
+    std::cout << "After deleteNode(idx=3): ";
+    heap.printHeap();
+
+    return 0;
+}
+```
+
+
+
+##### 对顶堆
+
+​	同时使用一个大根堆和小根堆，并且**大根堆**所有元素**小于**小根堆所有元素，且保证**小根堆**的元素数量**始终等于**K(K可以是变化的)。目的是实时找到第K个大的数。
+
+**插入新元素**
+
+​	先将元素插入致大根堆，然后将大根堆的堆顶给小根堆，如果小跟堆元素数量多于K，则把堆顶给大根堆。时间复杂度$O(logN)$。
+
+
+
+##### 配对堆
+
+​	配对堆是满足堆性质的带权多叉树（"多叉小根堆"）。通常用儿子-兄弟表示法储存，即一个节点的所有儿子节点形成一个单向链表，每个节点储存第一个儿子的指针（链表头节点）和它的右兄弟指针。
+
+​	
+
+
+
+
+
+
 
 
 
