@@ -1,11 +1,3 @@
-
-
-Episodic Task（情节任务） -> Continuing Task（持续任务）
-
-How?Why?
-
-
-
 ## Bellman Equation:
 
 #### bootstrapping（自举法）：
@@ -34,7 +26,7 @@ $$
 
 #### Bellman Equation:
 
-The Bellman equation describes **the ralstionship among the values of all states**.
+The Bellman equation describes **the relationship among the values of all states**.
 
 **First**, calculate the first term $\mathbb{E}[R_{t+1}|S_{t}=s]$:
 
@@ -210,9 +202,27 @@ A policy $\pi^{*}$ is optimal if $v_{\pi^*}(s)\geq v_\pi(s)$ for all *s* and for
 
 **Bellman optimality equation (elementwise form):**
 $$
-\begin{aligned}v(s)&=\max_\pi\sum_a\pi(a|s)\left(\sum_rp(r|s,a)r+\gamma\sum_{s'}p(s'|s,a)v(s')\right),\quad\forall s\in\mathcal{S}\\&=\max_\pi\sum_a\pi(a|s)q(s,a)\quad s\in\mathcal{S}\end{aligned}
+\begin{aligned}v(s)&=\max_\pi\sum_a\pi(a|s)\left(\sum_rp(r|s,a)r+\gamma\sum_{s'}p(s'|s,a)v(s')\right),\quad\forall s\in\mathcal{S}\\&=\max_\pi\sum_a\pi(a|s)q(s,a)\quad s\in\mathcal{S}\\&=\max_{a\in\mathcal{A}(s)}q(s,a)\end{aligned}
 $$
+Let $f(v):=\max_{\pi}(r_{\pi}+\gamma P_{\pi}v)$
+
+Hence, $v=f(v)=\max(r_{\pi}+\gamma P_{\pi}v)$
+
+Theorem: $f(v)$ is a **contraction mapping satisfying** (收敛映射，这里证明过程省略):$\|f(v_{1})-f(v_{2})\|\leq\gamma\|v_{1}-v_{2}\|$
+
+For the BOE $v=f(v)=\max(r_{\pi}+\gamma P_{\pi}v)$, there always **exists a solution** $v^{*}$ and the solution is unique.The solution couldbe sovled **iteratively** by :
+$$
+v_{k+1}=f(v_{k})=\max_{\pi}(r_{\pi}+\gamma P_{\pi}v_{k})
+$$
+Thus, the sequence $\left\{v_{k}\right\}$ converges to $v^*$ **exponentially** fast given any **initial guess** $v_0$. The convergence rate is determined by $\gamma$.
+
 **Bellman optimality equation (matrix-vector form):**
 $$
 v=\max_\pi(r_\pi+\gamma P_\pi v)
 $$
+
+
+## Value Iteration and Policy Iteration
+
+#### Value Iteration
+

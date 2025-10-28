@@ -1186,7 +1186,130 @@ int main() {
 
 ​	
 
+#### 树
 
+##### 二叉树
+
+
+
+```c++
+// 定义二叉树节点
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+
+    // 构造函数
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+```
+我们可以使用**递归**或者**迭代**的方式实现前序、中序或者后续的遍历。而递归的方式很容易造成栈溢出，所以下面都用迭代的方式实现。
+
+**前序遍历**
+顺序：**根 -> 左 -> 右**
+
+```c++
+std::vector<int> preorderTraversalIterative(TreeNode* root) {
+    std::vector<int> result;
+    if (root == nullptr) {
+        return result;
+    }
+
+    std::stack<TreeNode*> s;
+    s.push(root);
+
+    while (!s.empty()) {
+        TreeNode* node = s.top();
+        s.pop();
+
+        result.push_back(node->val); // 1. 访问 根
+
+        // 2. 先压入 右 子节点 (因为它后被访问)
+        if (node->right != nullptr) {
+            s.push(node->right);
+        }
+        // 3. 再压入 左 子节点 (因为它先被访问)
+        if (node->left != nullptr) {
+            s.push(node->left);
+        }
+    }
+    return result;
+}
+```
+**中序遍历**
+顺序：**左 -> 根 -> 右**
+先一直向左压，再看根节点和右节点
+
+```c++
+std::vector<int> inorderTraversalIterative(TreeNode* root) {
+    std::vector<int> result;
+    std::stack<TreeNode*> s;
+    TreeNode* curr = root;
+
+    // 当 curr 不为空 (还要往左走) 或 栈不为空 (还有节点待处理)
+    while (curr != nullptr || !s.empty()) {
+        // 1. 一直向左，将路径上的节点全部压栈
+        while (curr != nullptr) {
+            s.push(curr);
+            curr = curr->left;
+        }
+
+        // 2. 此时 curr 为空，说明走到了最左边
+        // 从栈顶取出一个节点 (这就是 "左")
+        curr = s.top();
+        s.pop();
+
+        // 3. 访问 根
+        result.push_back(curr->val);
+
+        // 4. 转向 右 子树
+        curr = curr->right;
+    }
+    return result;
+}
+
+```
+**后序遍历**
+顺序：**左 -> 右 -> 根**
+后序(左->右->根) 是 前序(根->左->右) 的一种镜像 (根->右->左) 的逆序， 我们可以先实现 (根->右->左)，然后将结果反转。
+
+```c++
+std::vector<int> postorderTraversalIterative(TreeNode* root) {
+    std::vector<int> result;
+    if (root == nullptr) {
+        return result;
+    }
+
+    std::stack<TreeNode*> s;
+    s.push(root);
+
+    while (!s.empty()) {
+        TreeNode* node = s.top();
+        s.pop();
+
+        result.push_back(node->val); // 1. 访问 根
+
+        // 2. 先压入 左 子节点
+        if (node->left != nullptr) {
+            s.push(node->left);
+        }
+        // 3. 再压入 右 子节点
+        if (node->right != nullptr) {
+            s.push(node->right);
+        }
+    }
+    
+    // 此时 result 中的顺序是 (根 -> 右 -> 左)，将其反转，得到 (左 -> 右 -> 根)
+    std::reverse(result.begin(), result.end());
+    return result;
+}
+```
+
+
+
+##### 二叉搜索树
+
+性质：**左子树所有**节点的值**小于根节点**，**右子树所有**节点的指大于**根节点**
 
 
 
@@ -1672,6 +1795,182 @@ void union(int x,int y){
 	fa[x] = y; // 将x的根节点设置成y的。
 }
 
+
+```
+
+
+
+#### 矩阵乘法
+
+​	针对稀疏矩阵，使用**归并**算法实现矩阵乘法。首先是**稀疏矩阵表示方式**（加深对链表的理解）：
+
+```c++
+// 模板类
+template <typename T>
+class Matrix; 
+
+// 稀疏矩阵的节点
+template <typename T>
+struct MatrixNode {
+    friend class Matrix<T>; 
+
+private:
+    int row, col;
+    T value;
+    MatrixNode<T> *right; // 同一行中的下一个节点
+    MatrixNode<T> *down;  // 同一列中的下一个节点
+
+    // 构造函数
+    MatrixNode(int r = -1, int c = -1, T v = T())
+        : row(r), col(c), value(v), right(this), down(this) {
+    }
+};
+
+// 使用正交循环链表实现稀疏矩阵类
+template <typename T>
+class Matrix {
+private:
+    int numRows, numCols, numTerms; // numTerms：非零数量
+    
+    // 头节点数组，二级指针，headNodes 是一个指针,指向一个数组
+    MatrixNode<T>** headNodes; 
+    
+    // headNodes 数组的大小
+    int numHeads;
+
+public:
+    // 构造函数
+    Matrix(int r, int c) : numRows(r), numCols(c), numTerms(0) {
+        numHeads = std::max(r, c);
+        headNodes = new MatrixNode<T>*[numHeads];
+        for (int i = 0; i < numHeads; ++i) {
+            // 每个头节点都是一个 MatrixNode，其 right/down 指向自己
+            // 每个头节点都负责一个行和一个列，所以前两行有个max操作
+            headNodes[i] = new MatrixNode<T>(); 
+        }
+    }
+
+    ~Matrix() {
+        for (int i = 0; i < numHeads; ++i) {
+            MatrixNode<T>* current = headNodes[i]->right;
+            while (current != headNodes[i]) {
+                MatrixNode<T>* toDelete = current;
+                current = current->right;
+                delete toDelete; // 释放节点
+            }
+            delete headNodes[i];  //释放头节点
+        }
+        delete[] headNodes;  //释放头节点矩阵，因为这里头节点和头节点矩阵都是指针表示的
+    }
+    
+     // 插入一个新元素，用于构建矩阵
+    void insert(int r, int c, T v) {
+        // 合法范围内
+        if (r >= numRows || c >= numCols || r < 0 || c < 0) {
+            throw std::out_of_range("Insert: Index out of bounds");
+        }
+        
+        // 不存储 0 值
+        if (v == T()) return; 
+
+        MatrixNode<T>* newNode = new MatrixNode<T>(r, c, v);
+        
+        // 链接到行 
+        MatrixNode<T>* rowPrev = headNodes[r];
+        MatrixNode<T>* rowCurr = rowPrev->right;
+        
+        // rowCurr != headNodes[r] 即保证不要超过最右边的节点回到开头
+        while (rowCurr != headNodes[r] && rowCurr->col < c) {
+            rowPrev = rowCurr;
+            rowCurr = rowCurr->right;
+        }
+        rowPrev->right = newNode;
+        newNode->right = rowCurr;
+
+        // 链接到列
+        MatrixNode<T>* colPrev = headNodes[c];
+        MatrixNode<T>* colCurr = colPrev->down;
+        while (colCurr != headNodes[c] && colCurr->row < r) {
+            colPrev = colCurr;
+            colCurr = colCurr->down;
+        }
+        colPrev->down = newNode;
+        newNode->down = colCurr;
+
+        numTerms++;
+    }
+}
+```
+
+​	接下来就是矩阵乘法实现。
+
+```c++
+// 稀疏矩阵乘法 C = *this @ b
+// 时间复杂度：O(r_A × c_B + c_B × terms_A + r_A × terms_B)
+Matrix<T> operator*(Matrix<T> const& b) const {
+  if (numCols != b.numRows) {
+    throw std::invalid_argument("Matrix inner dimensions must agree for multiplication");
+  }
+
+  Matrix<T> c(numRows, b.numCols);
+  auto** lastInCol = new MatrixNode<T>*[c.numCols];
+  for (int j = 0; j < c.numCols; ++j) {
+    lastInCol[j] = c.headNodes[j];
+  }
+
+  // 遍历 A 的每一行
+  for (int i = 0; i < numRows; ++i) {
+    MatrixNode<T>* c_row_last = c.headNodes[i];
+
+    // 遍历 B 的每一列
+    for (int j = 0; j < b.numCols; ++j) {
+      T sum = T();  // C(i, j) 的累加和
+
+      MatrixNode<T>* a_ptr = headNodes[i]->right;   // A 的第 i 行
+      MatrixNode<T>* b_ptr = b.headNodes[j]->down;  // B 的第 j 列
+
+      // 计算点积: Row_i(A) * Col_j(B)
+      while (a_ptr != headNodes[i] && b_ptr != b.headNodes[j]) {
+        // A 当前元素的列号小于 B 当前元素的行号,不可能匹配,跳过 A 的这个元素
+        if (a_ptr->col < b_ptr->row) {
+          a_ptr = a_ptr->right;
+        } 
+          
+        // B 前元素的行号小于 A 当前元素的列号,不可能匹配,跳过 B 的这个元素  
+        else if (b_ptr->row < a_ptr->col) {
+          b_ptr = b_ptr->down;
+        } 
+        
+        // 此时肯定是 b_ptr->row = a_ptr->col
+        else {
+          // 匹配: a_ptr->col == b_ptr->row
+          sum   += a_ptr->value * b_ptr->value;
+          a_ptr  = a_ptr->right;
+          b_ptr  = b_ptr->down;
+        }
+      }
+
+      // 如果 C(i, j) 非零，则插入 C
+      if (sum != T()) {
+        MatrixNode<T>* newNode = new MatrixNode<T>(i, j, sum);
+        c.numTerms++;
+
+        // 链接到 C 的行列表=
+        c_row_last->right = newNode;
+        newNode->right    = c.headNodes[i];
+        c_row_last        = newNode;
+
+        // 链接到 C 的列列表=
+        lastInCol[j]->down = newNode;
+        newNode->down      = c.headNodes[j];
+        lastInCol[j]       = newNode;
+      }
+    }
+  }
+
+  delete[] lastInCol;
+  return c;
+}
 
 ```
 
